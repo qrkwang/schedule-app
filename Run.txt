@@ -1,2 +1,6 @@
+For frontend :
 npm start
 npm run electron-dev
+
+Backend (In backend folder):
+npx ts-node index.ts
