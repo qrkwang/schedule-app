@@ -37,7 +37,7 @@ app.post('/events', async (req, res) => {
         },
     })
 
-  res.json(result)  
+  res.status(201).json(result)  
 
   } catch (e: any) {
 
@@ -45,7 +45,7 @@ app.post('/events', async (req, res) => {
       console.log("error, message is", e.message);
       console.log("error is", e)
     
-      throw e
+      res.status(404);
   }
 })
 
@@ -66,7 +66,7 @@ app.put('/events:id', async (req, res) => {
       },
     })
 
-  res.json(result)  
+  res.status(201).json(result)  
 
   } catch (e: any) {
 
@@ -74,9 +74,36 @@ app.put('/events:id', async (req, res) => {
       console.log("error, message is", e.message);
       console.log("error is", e)
     
-      throw e
+      res.status(404);
   }
 })
+
+app.delete('/events:id', async (req, res) => {
+  console.log(req.body);
+  const { eventId } = req.params;
+
+  console.log(eventId);
+
+  try {
+
+  const result = await prisma.event.delete({
+      where: {
+        id: eventId,
+      },
+    })
+
+  res.status(201).json(result)  
+
+  } catch (e: any) {
+
+
+      console.log("error, message is", e.message);
+      console.log("error is", e)
+      
+      res.status(404);
+  }
+})
+
 
 app.listen(3000, () =>
   console.log('REST API server ready at: http://localhost:3000'),
