@@ -14,7 +14,13 @@ app.use(express.json())
 app.get('/events', async (req, res) => {
 
   try {
-    const events = await prisma.event.findMany()
+    const events = await prisma.event.findMany({
+       orderBy: [
+        {
+          dateFrom: 'asc',
+        },
+      ],
+    })
     res.status(200).json(events)
   } catch (error) {
     res.status(400).send(error);
@@ -49,17 +55,18 @@ app.post('/events', async (req, res) => {
   }
 })
 
-app.put('/events:id', async (req, res) => {
+app.put('/events/:id', async (req, res) => {
   console.log(req.body);
   const { eventTitle, eventDescription, dateTo, dateFrom, isDone } = req.body;
-  const { eventId } = req.params;
+  const { id } = req.params;
+
 
   console.log(eventTitle, eventDescription, dateTo, dateFrom, isDone);
   try {
 
   const result = await prisma.event.update({
       where: {
-        id: eventId,
+        id: parseInt(id),
       },
       data: {
           isDone: isDone,
@@ -78,17 +85,17 @@ app.put('/events:id', async (req, res) => {
   }
 })
 
-app.delete('/events:id', async (req, res) => {
+app.delete('/events/:id', async (req, res) => {
   console.log(req.body);
-  const { eventId } = req.params;
+  const { id } = req.params;
 
-  console.log(eventId);
+  console.log(id);
 
   try {
 
   const result = await prisma.event.delete({
       where: {
-        id: eventId,
+        id: parseInt(id),
       },
     })
 

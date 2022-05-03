@@ -82,6 +82,8 @@ const Home = () => {
     const [open, setOpen] = useState(false);
     const [pageContent, setPageContent] = useState("");
     const [todayDate, setTodayDate] = useState("");
+    const [triggerEventUpdate, setTriggerEventUpdate] = useState("");
+    const [triggerNoteUpdate, setTriggerNoteUpdate] = useState("");
 
     //Form Values
     const [eventTitle, setEventTitle] = useState("");
@@ -129,7 +131,6 @@ const Home = () => {
             eventDescription: eventDescription,
             dateTo: dateTo,
             dateFrom: dateFrom,
-            // isDone: false,
         };
 
         axios.post(`http://localhost:3000/events`, event)
@@ -142,7 +143,6 @@ const Home = () => {
             const note = {
                 noteTitle: noteTitle,
                 noteDescription: noteDescription,
-                // isDone: false,
             };
 
             axios.post(`http://localhost:3000/notes`, note)
@@ -158,6 +158,15 @@ const Home = () => {
 
 
     };
+
+    const deleteItem = (eventItem) => {
+        console.log("deleting item ", eventItem);
+        axios.delete(`http://localhost:3000/events/` + eventItem.id)
+            .then(res => {
+                console.log(res);
+            })
+        handleDialogClose();
+    }
 
     const resetFields = () => {
         setEventTitle("");
@@ -185,8 +194,9 @@ const Home = () => {
     //Call APIs for events and notes
     useEffect(()=> {
         getEvents();
+        setTriggerEventUpdate(false);
 
-    }, [open]);
+    }, [open, triggerEventUpdate]);
 
     const getEvents = () => {
         console.log("getevents");
@@ -201,7 +211,7 @@ const Home = () => {
                     // console.log("is done", eventItem.isDone);
                     // console.log("index", index);
                     arrayEvents.push(eventItem);
-                    if (eventItem.isDone === false) {
+                    if (eventItem.isDone === true) {
                         // console.log("is done is false");
                         checkedArray.push(index);
                     }
@@ -236,22 +246,41 @@ const Home = () => {
         handleClickOpen("eventItem", eventItem);
     };
 
+    //Handle toggle checkbox
     const handleToggle = (value: number, eventItem) => () => {
         const currentIndex = checked.indexOf(value);
         const newChecked = [...checked];
 
-        console.log("current index toggle", value);
-        console.log("current item being checked", eventItem);
+        // console.log("current index toggle", value);
+        console.log("current item being checked", eventItem.eventTitle);
 
+        const event = {
+            eventTitle: eventItem.eventTitle,
+            eventDescription: eventItem.eventDescription,
+            dateTo: eventItem.dateTo,
+            dateFrom: eventItem.dateFrom,
+            isDone: !eventItem.isDone,
+        };
+
+        console.log("updating isDone from %s to %s", eventItem.isDone, !eventItem.isDone);
         //Axios post update to item isDone
-        
-        if (currentIndex === -1) {
-            newChecked.push(value);
-        } else {
-            newChecked.splice(currentIndex, 1);
-        }
+        axios.put(`http://localhost:3000/events/` + eventItem.id, event)
+            .then(res => {
+                console.log("")
+                console.log(res);
+            })
 
-        setChecked(newChecked);
+        //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
+        setTriggerEventUpdate(true);
+
+        //
+        // if (currentIndex === -1) {
+        //     newChecked.push(value);
+        // } else {
+        //     newChecked.splice(currentIndex, 1);
+        // }
+        //
+        // setChecked(newChecked);
     };
 
     function renderEventBoxContent() {
@@ -266,8 +295,8 @@ const Home = () => {
                     <List style={{maxHeight: '75%', overflow: 'auto'}}
                     >
                     { eventList.map((eventItem, index) =>{
-                    // console.log(index);
-                    console.log("checked array", checked);
+                    console.log("mapping eventlist with item %s", eventItem.eventTitle);
+                    // console.log("mapping eventItem on list", eventItem);
                     // console.log("checked index of ", checked.indexOf(index));
                     // console.log("true or false ", checked.indexOf(index) !== -1);
                     return (
@@ -463,6 +492,7 @@ const Home = () => {
                         <div> {currentClickedItem.eventDescription} </div>
                     </DialogContent>
                     <DialogActions>
+                        <Button onClick={ () => deleteItem(currentClickedItem)}>Delete</Button>
                         <Button onClick={handleDialogClose}>Close</Button>
                     </DialogActions>
                 </Dialog>
