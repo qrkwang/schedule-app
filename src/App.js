@@ -13,9 +13,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 import { Calendar, momentLocalizer } from 'react-big-calendar'
-import moment from 'moment'
-import events from './events'
+import moment, {now} from 'moment'
 import "react-big-calendar/lib/css/react-big-calendar.css";
+
 import {Button, Checkbox, List, ListItem, ListItemText, Menu, MenuItem, TextField, Typography} from "@mui/material";
 // import DatePicker from 'react-date-picker'
 
@@ -37,17 +37,6 @@ const localizer = momentLocalizer(moment);
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
 
-const MyCalendar = props => (
-    <div>
-        <Calendar
-            localizer={localizer}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ margin: '0.5vmin', height: '80vh' }}
-        />
-    </div>
-)
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: '#DDDDDD',
@@ -101,6 +90,34 @@ const Home = () => {
     // Handle Add Button Menu
     const [anchorEl, setAnchorEl] = useState(null);
     const menuOpen = Boolean(anchorEl);
+
+    //Calendar Values
+    const [events, setCalendarEvents] = useState([
+        // {
+        //     id: 14,
+        //     title: 'Today',
+        //     start: new Date(new Date().setHours(new Date().getHours() - 3)),
+        //     end: new Date(new Date().setHours(new Date().getHours() + 3)),
+        // },
+        // {
+        //     id: 15,
+        //     title: 'Point in Time Event',
+        //     start: now,
+        //     end: now,
+        // },
+    ])
+
+    const MyCalendar = props => (
+        <div>
+            <Calendar
+                localizer={localizer}
+                events={events}
+                startAccessor="start"
+                endAccessor="end"
+                style={{ margin: '0.5vmin', height: '80vh' }}
+            />
+        </div>
+    )
 
 
     //Handle dialog
@@ -198,6 +215,16 @@ const Home = () => {
 
     }, [open, triggerEventUpdate]);
 
+    const areDatesOnSameDay = (date1, date2) => {
+
+        console.log("date1 year %s, date2 year %s", date1.getFullYear(), date2.getFullYear());
+        console.log("date1 month %s, date2 month %s", date1.getMonth(), date2.getMonth());
+        console.log("date1 date %s, date2 date %s", date1.getDate(), date2.getDate());
+
+        return date1.getFullYear() === date2.getFullYear() &&
+            date1.getMonth() === date2.getMonth() &&
+            date1.getDate() === date2.getDate();
+    }
     const getEvents = () => {
         console.log("getevents");
         return axios.get(`http://localhost:3000/events`)
@@ -206,11 +233,65 @@ const Home = () => {
                 console.log(res.data)
                 const arrayEvents = [];
                 const checkedArray = [];
+                const calendarEventsArr = [];
+
+                const todayDateAsDateType= new Date();
                 res.data.forEach(function (eventItem, index) {
+
                     // console.log("event item", eventItem);
                     // console.log("is done", eventItem.isDone);
                     // console.log("index", index);
-                    arrayEvents.push(eventItem);
+                    // const exampleObjArray = [{
+                    //     id: 14,
+                    //         title: 'Today',
+                    //     start: new Date(new Date().setHours(new Date().getHours() - 3)),
+                    //     end: new Date(new Date().setHours(new Date().getHours() + 3)),
+                    // },
+                    // {
+                    //     id: 15,
+                    //         title: 'Point in Time Event',
+                    //     start: now,
+                    //     end: now,
+                    // },
+                    // ];
+
+                    const itemEventObj = {
+                        id: eventItem.id,
+                        title: eventItem.eventTitle,
+                        start: eventItem.dateFrom,
+                        end: eventItem.dateTo,
+
+                    }
+
+                    calendarEventsArr.push(itemEventObj);
+                    // if todays date is in the range of the event item date range, then display in event list
+                    console.log("event item %s", eventItem.eventTitle);
+
+                    console.log("today date %s", todayDateAsDateType.getTime());
+                    console.log("compared dateFrom %s", Date.parse(eventItem.dateFrom));
+                    console.log("is today date bigger than dateFrom", todayDateAsDateType.getTime() > Date.parse(eventItem.dateFrom));
+                    //
+                    console.log("compared dateTo %s", Date.parse(eventItem.dateTo));
+                    console.log("is today date bigger than dateTo", todayDateAsDateType.getTime() > Date.parse(eventItem.dateTo));
+
+                    // console.log("compared dateTo %s", eventItem.dateFrom);
+
+                    // console.log("is today date bigger than dateFrom, %s, %s, %s", eventItem.dateFrom, todayDate, todayDate > eventItem.dateFrom);
+                    // console.log("is today date smaller than dateTo, %s, %s, %s", eventItem.dateTo, todayDate, todayDate < eventItem.dateTo);
+
+                    //If event is on today's date, display it. If event's date range includes today, display it. If
+
+                    //If event is before today and ends before today, do not display. Display everything else. <<
+                    // if (areDatesOnSameDay(todayDateAsDateType,  new Date(Date.parse(eventItem.dateFrom)))){
+                    //     console.log("event is set on today");
+                    // }
+                    if ( todayDateAsDateType.getTime() >= Date.parse(eventItem.dateFrom) && todayDateAsDateType.getTime() >= Date.parse(eventItem.dateTo)) {
+                        console.log("Event starts and ends before today, not displaying this.", eventItem.eventTitle);
+                    } else {
+                        // do nothing if checks does not pass.
+                        arrayEvents.push(eventItem);
+                    }
+
                     if (eventItem.isDone === true) {
                         // console.log("is done is false");
                         checkedArray.push(index);
@@ -218,6 +299,7 @@ const Home = () => {
                 })
                 setChecked(checkedArray);
                 setEventList(arrayEvents);
+                setCalendarEvents(calendarEventsArr);
             }
             )
             .catch((err) => console.error(err));
@@ -383,16 +465,6 @@ const Home = () => {
                         InputLabelProps={{ style: { fontSize: '1vmax' } }}
                     />
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <DatePicker
-                            label="Date To"
-                            value={dateTo}
-                            onChange={(newValue) => {
-                                setDateTo(newValue);
-                            }}
-                            renderInput={(params) => <TextField {...params} />}
-                            InputProps={{ style: { fontSize: '1vmax' } }}
-                            // InputLabelProps={{ style: { fontSize: '1vmax' } }}
-                        />
 
                             <DatePicker
                                 label="Date From"
@@ -404,6 +476,18 @@ const Home = () => {
                                 InputProps={{ style: { fontSize: '1vmax' } }}
                                 // InputLabelProps={{ style: { fontSize: '1vmax' } }}
                             />
+
+                        <DatePicker
+                            label="Date To"
+                            value={dateTo}
+                            onChange={(newValue) => {
+                                setDateTo(newValue);
+                            }}
+                            renderInput={(params) => <TextField {...params} />}
+                            InputProps={{ style: { fontSize: '1vmax' } }}
+                            // InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                        />
+
                     </LocalizationProvider>
                     </Stack>
                     {/*<DatePicker name= "dateTo" onChange={setDateTo} value={dateTo} />*/}
@@ -490,6 +574,10 @@ const Home = () => {
                         <div> {currentClickedItem.eventTitle} </div>
 
                         <div> {currentClickedItem.eventDescription} </div>
+
+                        <div> {currentClickedItem.dateFrom} </div>
+                        <div> {currentClickedItem.dateTo} </div>
+
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={ () => deleteItem(currentClickedItem)}>Delete</Button>
