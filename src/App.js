@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -115,10 +115,31 @@ const Home = () => {
                 startAccessor="start"
                 endAccessor="end"
                 style={{ margin: '0.5vmin', height: '80vh' }}
+                onSelectEvent={handleSelectEvent}
             />
         </div>
     )
 
+
+
+    //Handle calendar event click
+    const handleSelectEvent = useCallback(
+        (event) => {
+            console.log("eventlist array print out ", eventList);
+
+            const eventId = event.id;
+            console.log("event id from calendar is %s", event.id);
+
+            //Find eventItem using eventId
+            const eventItem = eventList.filter(eventObj => eventObj.id === eventId);
+
+            console.log("event item clicked", eventItem);
+            handleClickOpen("eventItem", eventItem);
+
+
+        },
+        []
+    )
 
     //Handle dialog
     const handleClickOpen = (page, eventItem) => {
@@ -267,12 +288,12 @@ const Home = () => {
                     // if todays date is in the range of the event item date range, then display in event list
                     console.log("event item %s", eventItem.eventTitle);
 
-                    console.log("today date %s", todayDateAsDateType.getTime());
-                    console.log("compared dateFrom %s", Date.parse(eventItem.dateFrom));
-                    console.log("is today date bigger than dateFrom", todayDateAsDateType.getTime() > Date.parse(eventItem.dateFrom));
-                    //
-                    console.log("compared dateTo %s", Date.parse(eventItem.dateTo));
-                    console.log("is today date bigger than dateTo", todayDateAsDateType.getTime() > Date.parse(eventItem.dateTo));
+                    // console.log("today date %s", todayDateAsDateType.getTime());
+                    // console.log("compared dateFrom %s", Date.parse(eventItem.dateFrom));
+                    // console.log("is today date bigger than dateFrom", todayDateAsDateType.getTime() > Date.parse(eventItem.dateFrom));
+
+                    // console.log("compared dateTo %s", Date.parse(eventItem.dateTo));
+                    // console.log("is today date bigger than dateTo", todayDateAsDateType.getTime() > Date.parse(eventItem.dateTo));
 
                     // console.log("compared dateTo %s", eventItem.dateFrom);
 
@@ -299,6 +320,9 @@ const Home = () => {
                 })
                 setChecked(checkedArray);
                 setEventList(arrayEvents);
+                console.log("setting eventlist", arrayEvents);
+                console.log("after set eventlist", eventList);
+
                 setCalendarEvents(calendarEventsArr);
             }
             )
@@ -377,7 +401,7 @@ const Home = () => {
                     <List style={{maxHeight: '75%', overflow: 'auto'}}
                     >
                     { eventList.map((eventItem, index) =>{
-                    console.log("mapping eventlist with item %s", eventItem.eventTitle);
+                    // console.log("mapping eventlist with item %s", eventItem.eventTitle);
                     // console.log("mapping eventItem on list", eventItem);
                     // console.log("checked index of ", checked.indexOf(index));
                     // console.log("true or false ", checked.indexOf(index) !== -1);
