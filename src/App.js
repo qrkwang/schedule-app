@@ -86,6 +86,7 @@ const Home = () => {
     const [currentClickedItem, setCurrentClickedItem] = useState("");
     const [checked, setChecked] = useState([]);
 
+    const [noteList, setNoteList] = useState([]);
     // Handle Add Button Menu
     const [anchorEl, setAnchorEl] = useState(null);
     const menuOpen = Boolean(anchorEl);
@@ -228,7 +229,8 @@ const Home = () => {
 
     //Call APIs for events and notes
     useEffect(()=> {
-        getEvents();
+        getEventsAndNotes();
+
         setTriggerEventUpdate(false);
 
     }, [open, triggerEventUpdate]);
@@ -245,9 +247,9 @@ const Home = () => {
     // }, [currentClickedItem])
 
 
-    const getEvents = () => {
+    const getEventsAndNotes = () => {
         console.log("getevents");
-        return instance.get(`http://localhost:3000/events`)
+        instance.get(`http://localhost:3000/events`)
 
             .then((res) => {
                     console.log(res.data)
@@ -264,8 +266,8 @@ const Home = () => {
                         const itemEventObj = {
                             id: eventItem.id,
                             title: eventItem.eventTitle,
-                            start: eventItem.dateFrom,
-                            end: eventItem.dateTo,
+                            start: moment(eventItem.dateFrom).toDate(),
+                            end: moment(eventItem.dateTo).toDate(),
 
                         }
 
@@ -298,7 +300,25 @@ const Home = () => {
                     }
             )
             .catch((err) => console.error(err));
-    }
+
+        console.log("get notes");
+        instance.get(`http://localhost:3000/notes`)
+            .then((res) => {
+                console.log(res.data)
+                const arrayNotes = [];
+                // const checkedArray = [];
+                // const calendarEventsArr = [];
+
+                res.data.forEach(noteItem => {
+                    arrayNotes.push(noteItem);
+
+                })
+                setNoteList(arrayNotes);
+            })
+            .catch((err) => console.error(err));
+
+        }
+
 
 
 
@@ -420,6 +440,64 @@ const Home = () => {
             )
         }
     }
+    function renderNoteBoxContent() {
+        if (noteList.length>0){
+            return (
+                <div>
+                    <Grid item xs={12}>
+                        <div style = {fontSubHeaderStyle}> Upcoming Notes </div>
+                        <Divider/>
+                    </Grid>
+                    <List style={{maxHeight: '75%', overflow: 'auto'}}
+                    >
+                        { noteList.map((noteItem, index) =>{
+
+
+                            // console.log("mapping eventlist with item %s", eventItem.eventTitle);
+                            // console.log("mapping eventItem on list", eventItem);
+                            // console.log("checked index of ", checked.indexOf(index));
+                            // console.log("true or false ", checked.indexOf(index) !== -1);
+                            return (
+
+                                <ListItem
+                                    divider = {true}
+                                    key = {index}
+                                    secondaryAction={
+                                        <Checkbox
+                                            style={{
+                                                transform: "scale(1.2)",
+                                            }}
+                                            edge="start"
+                                            onChange={handleToggle(index, noteItem)}
+                                            checked={checked.indexOf(index) !== -1}
+                                        />
+                                    }
+                                >
+
+                                    <ListItemText
+                                        disableTypography
+                                        onClick={() => itemClicked(noteItem)}
+                                        primary= {<Typography style={{                 overflow: 'hidden',
+                                            fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {noteItem.noteTitle }</Typography>}
+                                        // secondary={secondary ? 'Secondary text' : null}
+                                    />
+                                </ListItem>
+                            )
+                        }) }
+                    </List>
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    <Grid item xs={12}>
+                        <div style = {fontSubHeaderStyle}> Upcoming Notes </div>
+                        <Divider/>
+                    </Grid>
+                </div>
+            )
+        }
+    }
 
     function renderDialogContent() {
         if (pageContent === "upcoming") {
@@ -431,7 +509,10 @@ const Home = () => {
                         maxWidth={'lg'}
                         open={open}
                         onClose={handleDialogClose}>
-                    <DialogTitle>Add Upcoming Events</DialogTitle>
+                    <div style = {{backgroundColor: '#DFE2D7',}}>
+                    <DialogTitle sx = {{ marginBottom: -1, }}><div style = {{color: 'gray'}}>Add Upcoming Events</div>
+                    </DialogTitle>
+                    </div>
                     <DialogContent>
                         {/*<DialogContentText>*/}
                         {/*    ADD UPCOMING*/}
@@ -522,7 +603,9 @@ const Home = () => {
                     maxWidth={'lg'}
                     open={open}
                     onClose={handleDialogClose}>
-                    <DialogTitle>Add Notes</DialogTitle>
+                    <DialogTitle sx = {{marginBottom: -1, }}><div style = {{color: 'gray'}}>Add Notes</div>
+                    </DialogTitle>
+                    <Divider/>
                     <DialogContent>
                         {/*<DialogContentText>*/}
                         {/*    ADD NOTES*/}
@@ -571,11 +654,19 @@ const Home = () => {
                         maxWidth={'lg'}
                         open={open}
                         onClose={handleDialogClose}>
-                    <DialogTitle>Event Item Detail</DialogTitle>
-                    <DialogContent>
-                        <div> {currentClickedItem.eventTitle} </div>
+                    {/*<Box style = {cardStyle } sx={{border: 1, marginBottom: 1, padding: 0, borderRadius: 2, borderColor: '#DDDDDD' }}>*/}
 
-                        <div> {currentClickedItem.eventDescription} </div>
+                    <DialogTitle sx = {{marginBottom: -1, }}><div style = {{color: 'gray'}}>Event Item Detail</div>
+                    </DialogTitle>
+                    <Divider/>
+
+                    <DialogContent>
+                        <Stack spacing={3}>
+
+                        <Typography style = {{fontSize: '1vmax'}}> Event Title: {currentClickedItem.eventTitle} </Typography>
+
+                            <Typography style = {{fontSize: '1vmax'}}> Event Description: {currentClickedItem.eventDescription !== "" ? currentClickedItem.eventDescription : 'N/A'}</Typography>
+                        </Stack>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={ () => deleteItem(currentClickedItem)}>Delete</Button>
@@ -605,8 +696,8 @@ const Home = () => {
 
                         {renderEventBoxContent()}
                     </Box>
-                    <Box style = {cardStyle} sx={{border: 1,  padding: 2, borderRadius: 2, borderColor: '#DDDDDD' }}>
-                        <div> xs=4</div >
+                    <Box style = {cardStyle } sx={{border: 1, marginBottom: 1, padding: 0, borderRadius: 2, borderColor: '#DDDDDD' }}>
+                        {renderNoteBoxContent()}
                     </Box>
 
                 </Grid>

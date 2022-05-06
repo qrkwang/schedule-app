@@ -11,6 +11,9 @@ app.use(express.json())
 
 // ... your REST API routes will go here
 
+// EVENTS
+
+//Read
 app.get('/events', async (req, res) => {
 
   try {
@@ -29,6 +32,7 @@ app.get('/events', async (req, res) => {
 })
 
 
+//Create
 app.post('/events', async (req, res) => {
   console.log(req.body);
   const { eventTitle, eventDescription, dateTo, dateFrom } = req.body
@@ -55,6 +59,7 @@ app.post('/events', async (req, res) => {
   }
 })
 
+//Update
 app.put('/events/:id', async (req, res) => {
   console.log(req.body);
   const { eventTitle, eventDescription, dateTo, dateFrom, isDone } = req.body;
@@ -85,6 +90,7 @@ app.put('/events/:id', async (req, res) => {
   }
 })
 
+//Delete
 app.delete('/events/:id', async (req, res) => {
   console.log(req.body);
   const { id } = req.params;
@@ -111,6 +117,52 @@ app.delete('/events/:id', async (req, res) => {
   }
 })
 
+// NOTES
+
+//Read
+app.get('/notes', async (req, res) => {
+
+  try {
+    const notes = await prisma.note.findMany({
+       orderBy: [
+        {
+          createdAt: 'asc',
+        },
+      ],
+    })
+    res.status(201).json(notes)
+  } catch (error) {
+    res.status(400).send(error);
+  }
+
+})
+
+//Create
+app.post('/notes', async (req, res) => {
+  console.log(req.body);
+  const { noteTitle, noteDescription } = req.body
+
+  console.log(noteTitle, noteDescription);
+
+  try {
+
+  const result = await prisma.note.create({
+      data: {
+        noteTitle, noteDescription,  
+        },
+    })
+
+  res.status(201).json(result)  
+
+  } catch (e: any) {
+
+
+      console.log("error, message is", e.message);
+      console.log("error is", e)
+    
+      res.status(404);
+  }
+})
 
 app.listen(3000, () =>
   console.log('REST API server ready at: http://localhost:3000'),
