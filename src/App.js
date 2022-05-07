@@ -87,6 +87,7 @@ const Home = () => {
     const [checked, setChecked] = useState([]);
 
     const [noteList, setNoteList] = useState([]);
+
     // Handle Add Button Menu
     const [anchorEl, setAnchorEl] = useState(null);
     const menuOpen = Boolean(anchorEl);
@@ -338,9 +339,13 @@ const Home = () => {
         setAnchorEl(null);
     };
 
-    const itemClicked = (eventItem) => {
-        console.log("item clicked", eventItem);
-        handleClickOpen("eventItem", eventItem);
+    const itemClicked = (clickedItem, type) => {
+        console.log("item clicked", clickedItem);
+        if (type === 1) {
+            handleClickOpen("eventItem", clickedItem);
+        } else if (type === 2){
+            handleClickOpen("noteItem", clickedItem)
+        }
     };
 
     //Handle toggle checkbox
@@ -418,7 +423,7 @@ const Home = () => {
 
                                     <ListItemText
                                         disableTypography
-                                        onClick={() => itemClicked(eventItem)}
+                                        onClick={() => itemClicked(eventItem, 1)}
                                         primary= {<Typography style={{                 overflow: 'hidden',
                                             fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }</Typography>}
                                         // secondary={secondary ? 'Secondary text' : null}
@@ -476,7 +481,7 @@ const Home = () => {
 
                                     <ListItemText
                                         disableTypography
-                                        onClick={() => itemClicked(noteItem)}
+                                        onClick={() => itemClicked(noteItem, 2)}
                                         primary= {<Typography style={{                 overflow: 'hidden',
                                             fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {noteItem.noteTitle }</Typography>}
                                         // secondary={secondary ? 'Secondary text' : null}
@@ -674,8 +679,37 @@ const Home = () => {
                     </DialogActions>
                 </Dialog>
             )
+        } else if (pageContent === "noteItem") {
+            return (
+                <Dialog style = {{
+                }}
+                        fullWidth={true}
+                        maxWidth={'lg'}
+                        open={open}
+                        onClose={handleDialogClose}>
+                    {/*<Box style = {cardStyle } sx={{border: 1, marginBottom: 1, padding: 0, borderRadius: 2, borderColor: '#DDDDDD' }}>*/}
+
+                    <DialogTitle sx = {{marginBottom: -1, }}><div style = {{color: 'gray'}}>Note Item Detail</div>
+                    </DialogTitle>
+                    <Divider/>
+
+                    <DialogContent>
+                        <Stack spacing={3}>
+
+                            <Typography style = {{fontSize: '1vmax'}}> Note Title: {currentClickedItem.noteTitle} </Typography>
+
+                            <Typography style = {{fontSize: '1vmax'}}> Note Description: {currentClickedItem.noteDescription !== "" ? currentClickedItem.noteDescription : 'N/A'}</Typography>
+                        </Stack>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={ () => deleteItem(currentClickedItem)}>Delete</Button>
+                        <Button onClick={handleDialogClose}>Close</Button>
+                    </DialogActions>
+                </Dialog>
+            )
         } else {
             // console.log("no content");
+
         }
     }
 
