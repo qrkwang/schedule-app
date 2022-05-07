@@ -85,6 +85,7 @@ const Home = () => {
     const [eventList, setEventList] = useState([]);
     const [currentClickedItem, setCurrentClickedItem] = useState("");
     const [checked, setChecked] = useState([]);
+    const [noteChecked, setNoteChecked] = useState([]);
 
     const [noteList, setNoteList] = useState([]);
 
@@ -310,10 +311,18 @@ const Home = () => {
                 // const checkedArray = [];
                 // const calendarEventsArr = [];
 
+                let index = 0;
+                const checkedArray = [];
+
                 res.data.forEach(noteItem => {
                     arrayNotes.push(noteItem);
-
+                    if (noteItem.isDone === true) {
+                        // console.log("is done is true");
+                        checkedArray.push(index);
+                    }
+                    index ++;
                 })
+                setNoteChecked(checkedArray);
                 setNoteList(arrayNotes);
             })
             .catch((err) => console.error(err));
@@ -349,29 +358,46 @@ const Home = () => {
     };
 
     //Handle toggle checkbox
-    const handleToggle = (value: number, eventItem) => () => {
+    const handleToggle = (value: number, checkedItem, type) => () => {
         // const currentIndex = checked.indexOf(value);
         // const newChecked = [...checked];
 
         console.log("current index toggle", value);
-        console.log("current item being checked", eventItem.eventTitle);
+        console.log("current item being checked", checkedItem.eventTitle);
+        console.log("current item being checked", type);
+        console.log("updating isDone from %s to %s", checkedItem.isDone, !checkedItem.isDone);
 
-        const event = {
-            eventTitle: eventItem.eventTitle,
-            eventDescription: eventItem.eventDescription,
-            dateTo: eventItem.dateTo,
-            dateFrom: eventItem.dateFrom,
-            isDone: !eventItem.isDone,
-        };
+        if (type === 1) {
+            const event = {
+                eventTitle: checkedItem.eventTitle,
+                eventDescription: checkedItem.eventDescription,
+                dateTo: checkedItem.dateTo,
+                dateFrom: checkedItem.dateFrom,
+                isDone: !checkedItem.isDone,
+            };
 
-        console.log("updating isDone from %s to %s", eventItem.isDone, !eventItem.isDone);
-        //Axios post update to item isDone
-        instance.put(`http://localhost:3000/events/` + eventItem.id, event)
-            .then(res => {
-                console.log("")
-                console.log(res);
-            })
+            //Axios post update to item isDone
+            instance.put(`http://localhost:3000/events/` + checkedItem.id, event)
+                .then(res => {
+                    console.log("")
+                    console.log(res);
+                })
+        } else if (type === 2) {
+            const note = {
+                noteTitle: checkedItem.eventTitle,
+                noteDescription: checkedItem.eventDescription,
+                isDone: !checkedItem.isDone,
+            };
 
+            //Axios post update to item isDone
+            instance.put(`http://localhost:3000/notes/` + checkedItem.id, note)
+                .then(res => {
+                    console.log("")
+                    console.log(res);
+                })
+        } else {
+
+        }
         //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
         setTriggerEventUpdate(true);
 
@@ -398,38 +424,73 @@ const Home = () => {
                     <List style={{maxHeight: '75%', overflow: 'auto'}}
                     >
                         { eventList.map((eventItem, index) =>{
-
-
                             // console.log("mapping eventlist with item %s", eventItem.eventTitle);
                             // console.log("mapping eventItem on list", eventItem);
                             // console.log("checked index of ", checked.indexOf(index));
                             // console.log("true or false ", checked.indexOf(index) !== -1);
-                            return (
-
-                                <ListItem
-                                    divider = {true}
-                                    key = {index}
-                                    secondaryAction={
-                                        <Checkbox
-                                            style={{
-                                                transform: "scale(1.2)",
-                                            }}
-                                            edge="start"
-                                            onChange={handleToggle(index, eventItem)}
-                                            checked={checked.indexOf(index) !== -1}
+                            if (checked.indexOf(index) !== -1) {
+                                //if checkbox is ticked, display completed colors
+                                return (
+                                    <ListItem
+                                        divider = {true}
+                                        key = {index}
+                                        secondaryAction={
+                                            <Checkbox
+                                                style={{
+                                                    transform: "scale(1.2)",
+                                                }}
+                                                edge="start"
+                                                onChange={handleToggle(index, eventItem, 1)}
+                                                checked={checked.indexOf(index) !== -1}
+                                            />
+                                        }
+                                        style = {{
+                                            backgroundColor: "lightgreen"
+                                        }}
+                                    >
+                                        <ListItemText
+                                            disableTypography
+                                            onClick={() => itemClicked(eventItem, 1)}
+                                            primary= {<Typography style={{                 overflow: 'hidden',
+                                                fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }</Typography>}
+                                            // secondary={secondary ? 'Secondary text' : null}
                                         />
-                                    }
-                                >
+                                    </ListItem>
+                                )
+                            } else {
+                                //if checkbox is not ticked, display normal colors
+                                return (
 
-                                    <ListItemText
-                                        disableTypography
-                                        onClick={() => itemClicked(eventItem, 1)}
-                                        primary= {<Typography style={{                 overflow: 'hidden',
-                                            fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }</Typography>}
-                                        // secondary={secondary ? 'Secondary text' : null}
-                                    />
-                                </ListItem>
-                            )
+                                    <ListItem
+                                        divider = {true}
+                                        key = {index}
+                                        secondaryAction={
+                                            <Checkbox
+                                                style={{
+                                                    transform: "scale(1.2)",
+                                                }}
+                                                edge="start"
+                                                onChange={handleToggle(index, eventItem, 1)}
+                                                checked={checked.indexOf(index) !== -1}
+                                            />
+                                        }
+                                        style = {{
+                                            backgroundColor: "lightgreen"
+                                        }}
+                                    >
+
+                                        <ListItemText
+                                            disableTypography
+                                            onClick={() => itemClicked(eventItem, 1)}
+                                            primary= {<Typography style={{                 overflow: 'hidden',
+                                                fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }</Typography>}
+                                            // secondary={secondary ? 'Secondary text' : null}
+                                        />
+                                    </ListItem>
+                                )
+                            }
+
+
                         }) }
                     </List>
                 </div>
@@ -457,37 +518,63 @@ const Home = () => {
                     >
                         { noteList.map((noteItem, index) =>{
 
+                            if (noteChecked.indexOf(index) !== -1) {
+                                //if this item is checked, display completed colors
+                                return (
 
-                            // console.log("mapping eventlist with item %s", eventItem.eventTitle);
-                            // console.log("mapping eventItem on list", eventItem);
-                            // console.log("checked index of ", checked.indexOf(index));
-                            // console.log("true or false ", checked.indexOf(index) !== -1);
-                            return (
+                                    <ListItem
+                                        divider = {true}
+                                        key = {index}
+                                        secondaryAction={
+                                            <Checkbox
+                                                style={{
+                                                    transform: "scale(1.2)",
+                                                }}
+                                                edge="start"
+                                                onChange={handleToggle(index, noteItem, 2)}
+                                                checked={noteChecked.indexOf(index) !== -1}
+                                            />
+                                        }
+                                    >
 
-                                <ListItem
-                                    divider = {true}
-                                    key = {index}
-                                    secondaryAction={
-                                        <Checkbox
-                                            style={{
-                                                transform: "scale(1.2)",
-                                            }}
-                                            edge="start"
-                                            onChange={handleToggle(index, noteItem)}
-                                            checked={checked.indexOf(index) !== -1}
+                                        <ListItemText
+                                            disableTypography
+                                            onClick={() => itemClicked(noteItem, 2)}
+                                            primary= {<Typography style={{                 overflow: 'hidden',
+                                                fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {noteItem.noteTitle }</Typography>}
+                                            // secondary={secondary ? 'Secondary text' : null}
                                         />
-                                    }
-                                >
+                                    </ListItem>
+                                )
+                            } else {
+                                //if this item is not checked, display normal colors
+                                return (
 
-                                    <ListItemText
-                                        disableTypography
-                                        onClick={() => itemClicked(noteItem, 2)}
-                                        primary= {<Typography style={{                 overflow: 'hidden',
-                                            fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {noteItem.noteTitle }</Typography>}
-                                        // secondary={secondary ? 'Secondary text' : null}
-                                    />
-                                </ListItem>
-                            )
+                                    <ListItem
+                                        divider = {true}
+                                        key = {index}
+                                        secondaryAction={
+                                            <Checkbox
+                                                style={{
+                                                    transform: "scale(1.2)",
+                                                }}
+                                                edge="start"
+                                                onChange={handleToggle(index, noteItem, 2)}
+                                                checked={noteChecked.indexOf(index) !== -1}
+                                            />
+                                        }
+                                    >
+
+                                        <ListItemText
+                                            disableTypography
+                                            onClick={() => itemClicked(noteItem, 2)}
+                                            primary= {<Typography style={{                 overflow: 'hidden',
+                                                fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {noteItem.noteTitle }</Typography>}
+                                            // secondary={secondary ? 'Secondary text' : null}
+                                        />
+                                    </ListItem>
+                                )
+                            }
                         }) }
                     </List>
                 </div>

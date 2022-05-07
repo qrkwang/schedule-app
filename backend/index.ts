@@ -164,6 +164,64 @@ app.post('/notes', async (req, res) => {
   }
 })
 
+//Update
+app.put('/notes/:id', async (req, res) => {
+  console.log(req.body);
+  const { noteTitle, noteDescription, isDone } = req.body;
+  const { id } = req.params;
+
+
+  console.log(noteTitle, noteDescription, isDone);
+  try {
+
+  const result = await prisma.note.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+          isDone: isDone,
+      },
+    })
+
+  res.status(201).json(result)  
+
+  } catch (e: any) {
+
+
+      console.log("error, message is", e.message);
+      console.log("error is", e)
+    
+      res.status(404);
+  }
+})
+
+//Delete
+app.delete('/notes/:id', async (req, res) => {
+  console.log(req.body);
+  const { id } = req.params;
+
+  console.log(id);
+
+  try {
+
+  const result = await prisma.note.delete({
+      where: {
+        id: parseInt(id),
+      },
+    })
+
+  res.status(201).json(result)  
+
+  } catch (e: any) {
+
+
+      console.log("error, message is", e.message);
+      console.log("error is", e)
+      
+      res.status(404);
+  }
+})
+
 app.listen(3000, () =>
   console.log('REST API server ready at: http://localhost:3000'),
 )
