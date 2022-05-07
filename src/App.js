@@ -474,9 +474,6 @@ const Home = () => {
                                                 checked={checked.indexOf(index) !== -1}
                                             />
                                         }
-                                        style = {{
-                                            backgroundColor: "lightgreen"
-                                        }}
                                     >
 
                                         <ListItemText
@@ -535,6 +532,9 @@ const Home = () => {
                                                 checked={noteChecked.indexOf(index) !== -1}
                                             />
                                         }
+                                        style = {{
+                                            backgroundColor: "lightgreen"
+                                        }}
                                     >
 
                                         <ListItemText
