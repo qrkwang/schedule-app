@@ -36,7 +36,7 @@ const localizer = momentLocalizer(moment);
 //Made axios global
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
-
+const backendURL = `http://192.168.68.100:3000`
 // const Item = styled(Paper)(({ theme }) => ({
 //     backgroundColor: '#DDDDDD',
 //     ...theme.typography.body2,
@@ -65,6 +65,43 @@ const fontSubHeaderStyle = {
     height: '6vh',
     fontSize: '1.2vmax',
     fontWeight: 'bold',
+}
+
+const Login = () => {
+    return (
+        <Box sx={{ flexGrow: 1 }}>
+            <form>
+            <TextField
+                margin="none"
+                id="username"
+                label="Username"
+                fullWidth
+                variant="standard"
+                // value={eventTitle}
+                // onChange={(e) => setEventTitle(e.target.value)}
+                size="normal"
+                InputProps={{ style: { fontSize: '1vmax' } }}
+                InputLabelProps={{ style: { fontSize: '1vmax' } }}
+            />
+
+                <TextField
+                    margin="none"
+                    id="password"
+                    label="Password"
+                    fullWidth
+                    variant="standard"
+                    // value={eventTitle}
+                    // onChange={(e) => setEventTitle(e.target.value)}
+                    size="normal"
+                    InputProps={{ style: { fontSize: '1vmax' } }}
+                    InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                />
+
+                <Button style = {{ marginTop:"20px"}}variant="contained">Login</Button>
+            </form>
+        </Box>
+        )
+
 }
 const Home = () => {
     const [open, setOpen] = useState(false);
@@ -160,7 +197,7 @@ const Home = () => {
                 dateFrom: dateFrom,
             };
 
-            instance.post(`http://localhost:3000/events`, event)
+            instance.post(backendURL + `/events`, event)
                 .then(res => {
                     console.log(res);
                     console.log(res.data);
@@ -172,7 +209,7 @@ const Home = () => {
                 noteDescription: noteDescription,
             };
 
-            instance.post(`http://localhost:3000/notes`, note)
+            instance.post(backendURL + `/notes`, note)
                 .then(res => {
                     console.log(res);
                     console.log(res.data);
@@ -188,7 +225,7 @@ const Home = () => {
 
     const deleteItem = (eventItem) => {
         console.log("deleting item ", eventItem);
-        instance.delete(`http://localhost:3000/events/` + eventItem.id)
+        instance.delete(backendURL + `/events/` + eventItem.id)
             .then(res => {
                 console.log(res);
             })
@@ -251,7 +288,7 @@ const Home = () => {
 
     const getEventsAndNotes = () => {
         console.log("getevents");
-        instance.get(`http://localhost:3000/events`)
+        instance.get(backendURL + `/events`)
 
             .then((res) => {
                     console.log(res.data)
@@ -304,7 +341,7 @@ const Home = () => {
             .catch((err) => console.error(err));
 
         console.log("get notes");
-        instance.get(`http://localhost:3000/notes`)
+        instance.get(backendURL + `/notes`)
             .then((res) => {
                 console.log(res.data)
                 const arrayNotes = [];
@@ -377,7 +414,7 @@ const Home = () => {
             };
 
             //Axios post update to item isDone
-            instance.put(`http://localhost:3000/events/` + checkedItem.id, event)
+            instance.put(backendURL + `/events/` + checkedItem.id, event)
                 .then(res => {
                     console.log("")
                     console.log(res);
@@ -390,7 +427,7 @@ const Home = () => {
             };
 
             //Axios post update to item isDone
-            instance.put(`http://localhost:3000/notes/` + checkedItem.id, note)
+            instance.put(backendURL + `/notes/` + checkedItem.id, note)
                 .then(res => {
                     console.log("")
                     console.log(res);
@@ -451,7 +488,8 @@ const Home = () => {
                                         <ListItemText
                                             disableTypography
                                             onClick={() => itemClicked(eventItem, 1)}
-                                            primary= {<Typography style={{                 overflow: 'hidden',
+                                            primary= {<Typography style={{               textDecoration: "line-through",
+                                                overflow: 'hidden',
                                                 fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }</Typography>}
                                             // secondary={secondary ? 'Secondary text' : null}
                                         />
@@ -540,7 +578,8 @@ const Home = () => {
                                         <ListItemText
                                             disableTypography
                                             onClick={() => itemClicked(noteItem, 2)}
-                                            primary= {<Typography style={{                 overflow: 'hidden',
+                                            primary= {<Typography style={{                     textDecoration: "line-through",
+                                                overflow: 'hidden',
                                                 fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {noteItem.noteTitle }</Typography>}
                                             // secondary={secondary ? 'Secondary text' : null}
                                         />
@@ -813,7 +852,7 @@ const Home = () => {
                     </Box>
                 </Grid>
                 <Grid item xs={4} >
-                    <Box style = {cardStyle } sx={{border: 1, marginBottom: 1, padding: 0, borderRadius: 2, borderColor: '#DDDDDD' }}>
+                    <Box style = {cardStyle } sx={{border: 1, marginBottom: 1, padding: 0, borderRadius: 2, borderColor: '#DDDDDD'  }}>
 
                         {renderEventBoxContent()}
                     </Box>
@@ -864,6 +903,8 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+
                 {/*<Route path="/addupcoming" element={<AddUpcoming />} />*/}
             </Routes>
         </BrowserRouter>
