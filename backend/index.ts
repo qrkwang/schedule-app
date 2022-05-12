@@ -222,6 +222,118 @@ app.delete('/notes/:id', async (req, res) => {
   }
 })
 
+
+// USER
+//Read
+app.get('/users', async (req, res) => {
+
+  try {
+    const users = await prisma.user.findMany({
+       orderBy: [
+        {
+          createdAt: 'asc',
+        },
+      ],
+    })
+    res.status(201).json(users)
+  } catch (error) {
+    res.status(400).send(error);
+  }
+
+})
+
+//Create
+app.post('/users', async (req, res) => {
+  console.log(req.body);
+  const { username, password } = req.body
+
+  console.log(username, password);
+
+  try {
+
+  const result = await prisma.user.create({
+      data: {
+        username, password,  
+        },
+    })
+
+  res.status(201).json(result)  
+
+  } catch (e: any) {
+
+
+      console.log("error, message is", e.message);
+      console.log("error is", e)
+
+      if (e.code === 'P2002') {
+        console.log("username already exists");
+        res.status(301).send("DUPLICATE USERNAME");
+      }
+    
+      // res.status(404);
+  }
+
+})
+
+//Update
+app.put('/notes/:id', async (req, res) => {
+  console.log(req.body);
+  const { noteTitle, noteDescription, isDone } = req.body;
+  const { id } = req.params;
+
+
+  console.log(noteTitle, noteDescription, isDone);
+  try {
+
+  const result = await prisma.note.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+          isDone: isDone,
+      },
+    })
+
+  res.status(201).json(result)  
+
+  } catch (e: any) {
+
+
+      console.log("error, message is", e.message);
+      console.log("error is", e)
+    
+      res.status(404);
+  }
+})
+
+//Delete
+app.delete('/notes/:id', async (req, res) => {
+  console.log(req.body);
+  const { id } = req.params;
+
+  console.log(id);
+
+  try {
+
+  const result = await prisma.note.delete({
+      where: {
+        id: parseInt(id),
+      },
+    })
+
+  res.status(201).json(result)  
+
+  } catch (e: any) {
+
+
+      console.log("error, message is", e.message);
+      console.log("error is", e)
+      
+      res.status(404);
+  }
+})
+
+
 app.listen(3000, () =>
   console.log('REST API server ready at: http://localhost:3000'),
 )

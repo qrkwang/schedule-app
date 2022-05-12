@@ -16,7 +16,18 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import events from './events'
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import {Button, Checkbox, List, ListItem, ListItemText, Menu, MenuItem, TextField, Typography} from "@mui/material";
+import {
+    Button,
+    Checkbox, Container,
+    CssBaseline,
+    List,
+    ListItem,
+    ListItemText,
+    Menu,
+    MenuItem, Modal,
+    TextField,
+    Typography
+} from "@mui/material";
 // import DatePicker from 'react-date-picker'
 
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -68,41 +79,251 @@ const fontSubHeaderStyle = {
 }
 
 const Login = () => {
-    return (
-        <Box sx={{ flexGrow: 1 }}>
-            <form>
-            <TextField
-                margin="none"
-                id="username"
-                label="Username"
-                fullWidth
-                variant="standard"
-                // value={eventTitle}
-                // onChange={(e) => setEventTitle(e.target.value)}
-                size="normal"
-                InputProps={{ style: { fontSize: '1vmax' } }}
-                InputLabelProps={{ style: { fontSize: '1vmax' } }}
-            />
+    const [userName, setUsername] = useState("");
+    const [password, setPassword] = useState("");
 
-                <TextField
-                    margin="none"
-                    id="password"
-                    label="Password"
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        //Do login request here
+
+
+    }
+
+        return (
+        <div>
+    <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
+        <CssBaseline />
+        <div
+            // className={useStyles.paper}
+        >
+            <Typography component="h1" variant="h5">
+                Login
+            </Typography>
+            <form
+                // className={useStyles.form}
+                noValidate
+                onSubmit={(e) => handleSubmit(e)}
+            >
+
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="username"
+                        label="Username"
+                        value={userName}
+                        onChange={(e) => setUsername(e.target.value)}
+                        size="normal"
+                        InputProps={{ style: { fontSize: '1vmax' } }}
+                        InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                    />
+
+                     <TextField
+                         variant="outlined"
+                         margin="normal"
+                         required
+                         fullWidth
+                         id="password"
+                         label="Password"
+                         value={password}
+                         onChange={(e) => setPassword(e.target.value)}
+                         size="normal"
+                         InputProps={{ style: { fontSize: '1vmax' } }}
+                         InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                    />
+                <Button
+                    type="submit"
                     fullWidth
-                    variant="standard"
-                    // value={eventTitle}
-                    // onChange={(e) => setEventTitle(e.target.value)}
-                    size="normal"
-                    InputProps={{ style: { fontSize: '1vmax' } }}
-                    InputLabelProps={{ style: { fontSize: '1vmax' } }}
-                />
-
-                <Button style = {{ marginTop:"20px"}}variant="contained">Login</Button>
+                    variant="contained"
+                    color="primary"
+                    // className={useStyles.submit}
+                >
+                    Login
+                </Button>
+                <Grid container style={{ paddingTop: "10px" }}>
+                    <Grid item>
+                        <Link to="/register" variant="body2">
+                            {"Don't have an account? Sign Up"}
+                        </Link>
+                    </Grid>
+                </Grid>
             </form>
-        </Box>
+            <Modal center
+                   // open={open}
+                   // onClose={onCloseModal}
+            >
+                {/*{modalType === "invalid" ? (*/}
+                {/*    <div>*/}
+                {/*        <h2> Invalid Login Details </h2>*/}
+                {/*        <p>Invalid username or password.</p>*/}
+                {/*    </div>*/}
+                {/*) : modalType === "empty" ? (*/}
+                {/*    <div>*/}
+                {/*        <h2> Empty fields</h2>*/}
+                {/*        <p>Please fill in all fields before logging in.</p>*/}
+                {/*    </div>*/}
+                {/*) : (*/}
+                {/*    <div>*/}
+                {/*        <h2> Error fetching</h2>*/}
+                {/*        <p>Please contact the administrator.</p>*/}
+                {/*    </div>*/}
+                {/*)}*/}
+            </Modal>
+        </div>
+    </Container>
+        </div>
+        // <Box sx={{ flexGrow: 1 }}>
+        //     <form>
+        //     <TextField
+        //         margin="none"
+        //         id="username"
+        //         label="Username"
+        //         fullWidth
+        //         variant="standard"
+        //         // value={eventTitle}
+        //         // onChange={(e) => setEventTitle(e.target.value)}
+        //         size="normal"
+        //         InputProps={{ style: { fontSize: '1vmax' } }}
+        //         InputLabelProps={{ style: { fontSize: '1vmax' } }}
+        //     />
+        //
+        //         <TextField
+        //             margin="none"
+        //             id="password"
+        //             label="Password"
+        //             fullWidth
+        //             variant="standard"
+        //             // value={eventTitle}
+        //             // onChange={(e) => setEventTitle(e.target.value)}
+        //             size="normal"
+        //             InputProps={{ style: { fontSize: '1vmax' } }}
+        //             InputLabelProps={{ style: { fontSize: '1vmax' } }}
+        //         />
+        //
+        //         <Button style = {{ marginTop:"20px"}}variant="contained">Login</Button>
+        //     </form>
+        // </Box>
         )
 
 }
+
+const Register = () => {
+    const [userName, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const user = {
+            username: userName,
+            password: password,
+        };
+
+        //Do register request here
+        instance.post(backendURL + `/users`, user)
+            .then(res => {
+                // console.log(res);
+                // console.log(res.data);
+                console.log("response code is " , res.status);
+            }), () => {
+            console.log("error while sending request");
+            console.log("response code is ", res.status);
+        };
+
+
+    }
+
+    return (
+        <div>
+            <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
+                <CssBaseline />
+                <div
+                    // className={useStyles.paper}
+                >
+                    <Typography component="h1" variant="h5">
+                        Register
+                    </Typography>
+                    <form
+                        // className={useStyles.form}
+                        noValidate
+                        onSubmit={(e) => handleSubmit(e)}
+                    >
+
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="username"
+                            label="Username"
+                            value={userName}
+                            onChange={(e) => setUsername(e.target.value)}
+                            size="normal"
+                            InputProps={{ style: { fontSize: '1vmax' } }}
+                            InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                        />
+
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="password"
+                            type="password"
+                            label="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            size="normal"
+                            InputProps={{ style: { fontSize: '1vmax' } }}
+                            InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            // className={useStyles.submit}
+                        >
+                            Register
+                        </Button>
+                        <Grid container style={{ paddingTop: "10px" }}>
+                            <Grid item>
+                                <Link to="/login" variant="body2">
+                                    {"Have an account? Login"}
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </form>
+                    <Modal center
+                        // open={open}
+                        // onClose={onCloseModal}
+                    >
+                        {/*{modalType === "invalid" ? (*/}
+                        {/*    <div>*/}
+                        {/*        <h2> Invalid Login Details </h2>*/}
+                        {/*        <p>Invalid username or password.</p>*/}
+                        {/*    </div>*/}
+                        {/*) : modalType === "empty" ? (*/}
+                        {/*    <div>*/}
+                        {/*        <h2> Empty fields</h2>*/}
+                        {/*        <p>Please fill in all fields before logging in.</p>*/}
+                        {/*    </div>*/}
+                        {/*) : (*/}
+                        {/*    <div>*/}
+                        {/*        <h2> Error fetching</h2>*/}
+                        {/*        <p>Please contact the administrator.</p>*/}
+                        {/*    </div>*/}
+                        {/*)}*/}
+                    </Modal>
+                </div>
+            </Container>
+        </div>
+    )
+
+}
+
 const Home = () => {
     const [open, setOpen] = useState(false);
     const [pageContent, setPageContent] = useState("");
@@ -244,9 +465,9 @@ const Home = () => {
 
     const areDatesOnSameDay = (date1, date2) => {
 
-        // console.log("date1 year %s, date2 year %s", date1.getFullYear(), date2.getFullYear());
-        // console.log("date1 month %s, date2 month %s", date1.getMonth(), date2.getMonth());
-        // console.log("date1 date %s, date2 date %s", date1.getDate(), date2.getDate());
+        console.log("date1 year %s, date2 year %s", date1.getFullYear(), date2.getFullYear());
+        console.log("date1 month %s, date2 month %s", date1.getMonth(), date2.getMonth());
+        console.log("date1 date %s, date2 date %s", date1.getDate(), date2.getDate());
 
         return date1.getFullYear() === date2.getFullYear() &&
             date1.getMonth() === date2.getMonth() &&
@@ -274,9 +495,9 @@ const Home = () => {
 
     }, [open, triggerEventUpdate]);
 
-    // useEffect(() => {
-    //     console.log("event list updated", eventList) // do something after state has updated
-    // }, [eventList])
+    useEffect(() => {
+        console.log("event list updated", eventList) // do something after state has updated
+    }, [eventList])
     // useEffect(() => {
     //     console.log("checked list updated", checked) // do something after state has updated
     // }, [checked])
@@ -299,8 +520,10 @@ const Home = () => {
                     const todayDateAsDateType= new Date();
                     let index = 0;
                 res.data.forEach(eventItem => {
-                        // console.log("event item %s", eventItem.eventTitle);
-                        // console.log("is done", eventItem.isDone);
+                        console.log("event item %s", eventItem.eventTitle);
+                        console.log("dateFrom %s", eventItem.dateFrom);
+
+                    // console.log("is done", eventItem.isDone);
                         // console.log("index", index);
                         const itemEventObj = {
                             id: eventItem.id,
@@ -313,12 +536,21 @@ const Home = () => {
                         calendarEventsArr.push(itemEventObj);
 
                         //If event is before today and ends before today, do not display. Display everything else. <<
-                        //Additional check for if event is within today.
-                        if ( todayDateAsDateType.getTime() >= Date.parse(eventItem.dateFrom) && todayDateAsDateType.getTime() >= Date.parse(eventItem.dateTo) && !areDatesOnSameDay(todayDateAsDateType, new Date(Date.parse(eventItem.dateFrom)))) {
+                        //Additional check for if event startdate or end date is within today.
+                        if ( todayDateAsDateType.getTime() >= Date.parse(eventItem.dateFrom) && todayDateAsDateType.getTime() >= Date.parse(eventItem.dateTo) && !areDatesOnSameDay(todayDateAsDateType, new Date(Date.parse(eventItem.dateFrom)))
+                            && !areDatesOnSameDay(todayDateAsDateType, new Date(Date.parse(eventItem.dateTo)))) {
                             // console.log("Event starts and ends before today & is not within today, not displaying this.", eventItem.eventTitle);
+                            // console.log("datefrom",  Date.parse(eventItem.dateFrom));
+                            // console.log("dateto", Date.parse(eventItem.dateTo));
+                            // console.log("Today Date bigger than datefrom", todayDateAsDateType.getTime() > Date.parse(eventItem.dateFrom));
+                            // console.log("Today Date bigger than dateTo", todayDateAsDateType.getTime() > Date.parse(eventItem.dateTo));
+
                         } else {
                             // Display if checks pass
                             arrayEvents.push(eventItem);
+
+
+
                             // Set checkedArray for items displayed
                             if (eventItem.isDone === true) {
                                 // console.log("is done is true");
@@ -328,11 +560,11 @@ const Home = () => {
                         }
                     })
                     // console.log("checked array is ", checkedArray);
-                    // console.log("array events is ", arrayEvents);
+                    console.log("array events is ", arrayEvents);
                     setChecked(checkedArray);
                     setEventList(arrayEvents);
                     // console.log("checked array state ", checked);
-                    // console.log("eventlist array state ", eventList);
+                    console.log("eventlist array state ", eventList);
 
                     setCalendarEvents(calendarEventsArr);
 
@@ -904,6 +1136,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
                 {/*<Route path="/addupcoming" element={<AddUpcoming />} />*/}
             </Routes>

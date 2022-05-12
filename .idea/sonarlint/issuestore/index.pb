@@ -15,16 +15,3 @@ B
 src/index.js,f\9\f900edc44cb929c2267a16100a32851f6d5b477d
 =
 src/index.css,c\5\c5d38a62d1faae90a2acaa34b79a7ef365c917e4
-L
-backend/prisma/schema.prisma,d\8\d87eeaa38ae092d140837cae72c719c4d9106e16
-<
-package.json,7\0\7030d0b2f71b999ff89a343de08c414af32fc93a
-9
-	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
-?
-src/App.test.js,9\2\923703ced91ac38943d37930d9d27a7ebe8f01ad
-4
-.env,3\c\3c84dcdc6bbe3d7817c49dcdc327b926fea1808a
-:
-
-src/App.js,1\e\1e43fa63aecd2127be034b3fb9d4caa172275714
