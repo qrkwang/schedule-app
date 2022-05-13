@@ -79,8 +79,13 @@ const fontSubHeaderStyle = {
 }
 
 const Login = () => {
+    //Form
     const [userName, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    //Modal Dialog
+    const [open, setOpen] = useState(false);
+    const [pageContent, setPageContent] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -114,7 +119,7 @@ const Login = () => {
                         id="username"
                         label="Username"
                         value={userName}
-                        onChange={(e) => setUsername(e.target.value)}
+                        onChange={(e) => setUsername(e.target.value.replace(/\s/g, ''))}
                         size="normal"
                         InputProps={{ style: { fontSize: '1vmax' } }}
                         InputLabelProps={{ style: { fontSize: '1vmax' } }}
@@ -128,7 +133,7 @@ const Login = () => {
                          id="password"
                          label="Password"
                          value={password}
-                         onChange={(e) => setPassword(e.target.value)}
+                         onChange={(e) => setPassword(e.target.value.replace(/\s/g, ''))}
                          size="normal"
                          InputProps={{ style: { fontSize: '1vmax' } }}
                          InputLabelProps={{ style: { fontSize: '1vmax' } }}
@@ -210,34 +215,117 @@ const Login = () => {
 }
 
 const Register = () => {
+
+    //Form
     const [userName, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    //Modal Dialog
+    const [open, setOpen] = useState(false);
+    const [pageContent, setPageContent] = useState("");
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const user = {
-            username: userName,
-            password: password,
-        };
+        if (!areFieldsEmpty()) {
+            const user = {
+                username: userName,
+                password: password,
+            };
 
-        //Do register request here
-        instance.post(backendURL + `/users`, user)
-            .then(res => {
-                // console.log(res);
-                // console.log(res.data);
-                console.log("response code is " , res.status);
-            }), () => {
-            console.log("error while sending request");
-            console.log("response code is ", res.status);
-        };
+            //Do register request here
+            instance.post(backendURL + `/users`, user)
+                .then(res => {
+                    // console.log(res);
+                    // console.log(res.data);
+                    console.log("response code is " , res.status);
+                    if (res.status === 201) {
+                        setPageContent("201");
+                        setOpen(true);
+                    }
+                }).catch(error => {
+                console.log("error while sending request", error.response.status);
+
+                if (error.response.status === 301) {
+                    setPageContent("301")
+                    setOpen(true);
+                }
+
+            });
+
+        } else {
+            setPageContent("empty");
+            setOpen(true);
+        }
 
 
     }
 
-    return (
+    function areFieldsEmpty() {
+        if (userName == "" && password == "") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function renderDialogContent() {
+
+            return (
+
+                <Dialog style={{}}
+                        fullWidth={true}
+                        maxWidth={'lg'}
+                        open={open}
+                        onClose={ ()=> setOpen(false)}
+                    >
+                    <div style={{backgroundColor: '#DFE2D7',}}>
+                        <DialogTitle sx={{marginBottom: -1,}}>
+                            {pageContent === "301" ? (
+                                    <div style={{color: 'gray'}}>Account already exists</div>
+                                )
+                                : pageContent === "201" ? (
+                                <div style={{color: 'gray'}}>Account created</div>
+                                 )
+                                : (
+                                <div style={{color: 'gray'}}>Empty fields</div>
+                                )
+                            }
+                        </DialogTitle>
+                    </div>
+                    <DialogContent>
+                        {pageContent === "301" ? (
+
+                            <div>
+                                <p>An account with this username already exists. Please login using this username or contact the administrator if you wish to get support.</p>
+                            </div>
+                        ) : pageContent === "201" ? (
+                            <div>
+                                <p>Account has been successfully created.</p>
+                            </div>
+                        )
+                        : pageContent === "empty" ? (
+                            <div>
+                                <p>Please fill in all fields before signing up.</p>
+                            </div>
+                        ) : (
+                            <div>
+                                <h2> Error fetching</h2>
+                                <p>Please contact the administrator.</p>
+                            </div>
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={ () => setOpen(false)}>Okay</Button>
+                    </DialogActions>
+                </Dialog>
+            );
+
+    }
+
+        return (
         <div>
-            <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
+            <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <div
                     // className={useStyles.paper}
@@ -259,7 +347,7 @@ const Register = () => {
                             id="username"
                             label="Username"
                             value={userName}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e) => setUsername(e.target.value.replace(/\s/g, ''))} //Regex to not include whitespaces or spaces
                             size="normal"
                             InputProps={{ style: { fontSize: '1vmax' } }}
                             InputLabelProps={{ style: { fontSize: '1vmax' } }}
@@ -274,7 +362,7 @@ const Register = () => {
                             type="password"
                             label="Password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e) => setPassword(e.target.value.replace(/\s/g, ''))} //Regex to not include whitespaces or spaces
                             size="normal"
                             InputProps={{ style: { fontSize: '1vmax' } }}
                             InputLabelProps={{ style: { fontSize: '1vmax' } }}
@@ -317,7 +405,11 @@ const Register = () => {
                         {/*    </div>*/}
                         {/*)}*/}
                     </Modal>
+                    {renderDialogContent()}
+
                 </div>
+
+
             </Container>
         </div>
     )
