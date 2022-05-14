@@ -38,8 +38,9 @@ import {
     BrowserRouter,
     Routes,
     Route,
-    Link,
+    Link, useNavigate
 } from "react-router-dom";
+import {navigate} from "react-big-calendar/lib/utils/constants";
 
 const localizer = momentLocalizer(moment);
 
@@ -79,6 +80,8 @@ const fontSubHeaderStyle = {
 }
 
 const Login = () => {
+    let navigate = useNavigate();
+
     //Form
     const [userName, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -87,14 +90,117 @@ const Login = () => {
     const [open, setOpen] = useState(false);
     const [pageContent, setPageContent] = useState("");
 
+    function areFieldsEmpty() {
+        if (userName === "" && password === "") {
+            return true;
+        }
+        return false;
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        //Do login request here
+        if (!areFieldsEmpty()) {
 
+            console.log("username and password %s %s", userName, password);
+            const user = {
+                username: userName,
+                password: password,
+            };
 
+            console.log("user obj is ", user);
+            //Do login request here
+            instance.post(backendURL + `/login`, user)
+                .then(res => {
+                    // console.log(res);
+                    // console.log(res.data);
+                    console.log("response code is " , res.status);
+                    if (res.status === 201) {
+                        //Login successfully
+                        {
+
+                            navigate(`/`);
+                        }
+                    }
+                }).catch(error => {
+                console.log("error while sending request", error);
+
+                // console.log("error while sending request", error.response.status);
+
+                if (error.response.status === 301) {
+                    setPageContent("301")
+                    setOpen(true);
+                } else if (error.response.status === 302) {
+                    setPageContent("302")
+                    setOpen(true);
+                } else {
+                    setPageContent("admin")
+                    setOpen(true);
+                }
+
+            });
+
+        } else {
+            setPageContent("empty");
+            setOpen(true);
+        }
     }
 
+    function renderDialogContent() {
+
+        return (
+
+            <Dialog style={{}}
+                    fullWidth={true}
+                    maxWidth={'lg'}
+                    open={open}
+                    onClose={ ()=> setOpen(false)}
+            >
+                <div style={{backgroundColor: '#DFE2D7',}}>
+                    <DialogTitle sx={{marginBottom: -1,}}>
+                        {pageContent === "301" ? (
+                                <div style={{color: 'gray'}}>Account does not exist</div>
+                            )
+                            : pageContent === "302" ? (
+                                    <div style={{color: 'gray'}}>Invalid credentials</div>
+                                )
+                                : pageContent === "empty" ? (
+                                    <div style={{color: 'gray'}}>Empty fields</div>
+                                ) : (
+                                    <div style={{color: 'gray'}}>Something went wrong</div>
+                                )
+                        }
+                    </DialogTitle>
+                </div>
+                <DialogContent>
+                    {pageContent === "301" ? (
+
+                        <div>
+                            <p>An account with this username does not exist. Please sign up or contact the administrator if you wish to get support.</p>
+                        </div>
+                    )
+                        : pageContent === "302" ? (
+                            <div>
+                                <p>You have entered an invalid username or password. Please try again.</p>
+                            </div>
+                        )
+                        : pageContent === "empty" ? (
+                            <div>
+                                <p>Please fill in all fields before logging in.</p>
+                            </div>
+                        ) : (
+                            <div>
+                                <p>Please contact the administrator.</p>
+                            </div>
+                        )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={ () => setOpen(false)}>Okay</Button>
+                </DialogActions>
+            </Dialog>
+        );
+
+    }
         return (
         <div>
     <Container component="main" maxWidth="xs" style={{ paddingTop: "20px" }}>
@@ -139,11 +245,12 @@ const Login = () => {
                          InputLabelProps={{ style: { fontSize: '1vmax' } }}
                     />
                 <Button
+
+
                     type="submit"
                     fullWidth
                     variant="contained"
                     color="primary"
-                    // className={useStyles.submit}
                 >
                     Login
                 </Button>
@@ -154,28 +261,10 @@ const Login = () => {
                         </Link>
                     </Grid>
                 </Grid>
+
             </form>
-            <Modal center
-                   // open={open}
-                   // onClose={onCloseModal}
-            >
-                {/*{modalType === "invalid" ? (*/}
-                {/*    <div>*/}
-                {/*        <h2> Invalid Login Details </h2>*/}
-                {/*        <p>Invalid username or password.</p>*/}
-                {/*    </div>*/}
-                {/*) : modalType === "empty" ? (*/}
-                {/*    <div>*/}
-                {/*        <h2> Empty fields</h2>*/}
-                {/*        <p>Please fill in all fields before logging in.</p>*/}
-                {/*    </div>*/}
-                {/*) : (*/}
-                {/*    <div>*/}
-                {/*        <h2> Error fetching</h2>*/}
-                {/*        <p>Please contact the administrator.</p>*/}
-                {/*    </div>*/}
-                {/*)}*/}
-            </Modal>
+            {renderDialogContent()}
+
         </div>
     </Container>
         </div>
@@ -250,6 +339,9 @@ const Register = () => {
                 if (error.response.status === 301) {
                     setPageContent("301")
                     setOpen(true);
+                } else {
+                    setPageContent("admin");
+                    setOpen(true);
                 }
 
             });
@@ -263,12 +355,12 @@ const Register = () => {
     }
 
     function areFieldsEmpty() {
-        if (userName == "" && password == "") {
+        if (userName === "" && password === "") {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
+
     function renderDialogContent() {
 
             return (
@@ -287,15 +379,16 @@ const Register = () => {
                                 : pageContent === "201" ? (
                                 <div style={{color: 'gray'}}>Account created</div>
                                  )
-                                : (
-                                <div style={{color: 'gray'}}>Empty fields</div>
+                                : pageContent === "empty" ? (
+                                    <div style={{color: 'gray'}}>Empty fields</div>
+                                ) : (
+                                    <div style={{color: 'gray'}}>Something went wrong</div>
                                 )
                             }
                         </DialogTitle>
                     </div>
                     <DialogContent>
                         {pageContent === "301" ? (
-
                             <div>
                                 <p>An account with this username already exists. Please login using this username or contact the administrator if you wish to get support.</p>
                             </div>
@@ -310,7 +403,6 @@ const Register = () => {
                             </div>
                         ) : (
                             <div>
-                                <h2> Error fetching</h2>
                                 <p>Please contact the administrator.</p>
                             </div>
                         )}
@@ -471,7 +563,7 @@ const Home = () => {
 
             const eventItem = eventList.filter(eventObj => eventObj.id === eventId).at(0);
 
-            // console.log("event item clicked", eventItem);
+            console.log("event item clicked", eventItem);
             handleClickOpen("eventItem", eventItem);
 
 
@@ -557,9 +649,9 @@ const Home = () => {
 
     const areDatesOnSameDay = (date1, date2) => {
 
-        console.log("date1 year %s, date2 year %s", date1.getFullYear(), date2.getFullYear());
-        console.log("date1 month %s, date2 month %s", date1.getMonth(), date2.getMonth());
-        console.log("date1 date %s, date2 date %s", date1.getDate(), date2.getDate());
+        // console.log("date1 year %s, date2 year %s", date1.getFullYear(), date2.getFullYear());
+        // console.log("date1 month %s, date2 month %s", date1.getMonth(), date2.getMonth());
+        // console.log("date1 date %s, date2 date %s", date1.getDate(), date2.getDate());
 
         return date1.getFullYear() === date2.getFullYear() &&
             date1.getMonth() === date2.getMonth() &&
@@ -612,8 +704,8 @@ const Home = () => {
                     const todayDateAsDateType= new Date();
                     let index = 0;
                 res.data.forEach(eventItem => {
-                        console.log("event item %s", eventItem.eventTitle);
-                        console.log("dateFrom %s", eventItem.dateFrom);
+                        // console.log("event item %s", eventItem.eventTitle);
+                        // console.log("dateFrom %s", eventItem.dateFrom);
 
                     // console.log("is done", eventItem.isDone);
                         // console.log("index", index);

@@ -333,6 +333,44 @@ app.delete('/notes/:id', async (req, res) => {
   }
 })
 
+//LOGIN
+
+app.post('/login', async (req, res) => {
+  const { username, password} = req.body;
+  console.log("username and password is %s and %s", username, password)
+
+  try {
+    const users = await prisma.user.findUnique({
+       where: {
+        username: String(username),
+       },
+    })
+
+    //Check if username exist first, if exist then validate password. If not exist, send back code 301. 
+    //If password not correct, send back code 302.
+
+    if (users == null) {
+      // console.log("username not found");
+      res.status(301).send("USERNAME NOT EXIST");
+
+    } else {
+      // console.log("username found");
+
+      if (password == users.password) {
+        console.log("password matches");
+        res.status(201).send("SUCCESS");
+      } else {
+        res.status(302).send("WRONG PASSWORD");
+        console.log("password not match");
+      }
+    }
+
+  } catch (error) {
+    console.log("error", error);
+    res.status(400).send(error);
+  }
+
+})
 
 app.listen(3000, () =>
   console.log('REST API server ready at: http://localhost:3000'),
