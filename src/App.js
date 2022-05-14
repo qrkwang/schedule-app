@@ -40,7 +40,6 @@ import {
     Route,
     Link, useNavigate
 } from "react-router-dom";
-import {navigate} from "react-big-calendar/lib/utils/constants";
 
 const localizer = momentLocalizer(moment);
 
@@ -48,7 +47,7 @@ const localizer = momentLocalizer(moment);
 //Made axios global
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
-const backendURL = `http://192.168.68.100:3000`
+const backendURL = `http://192.168.26.148:3000`
 // const Item = styled(Paper)(({ theme }) => ({
 //     backgroundColor: '#DDDDDD',
 //     ...theme.typography.body2,
@@ -118,8 +117,10 @@ const Login = () => {
                     if (res.status === 201) {
                         //Login successfully
                         {
+                            console.log("user id is ", res.data.userid);
 
                             navigate(`/`);
+                            localStorage.setItem("userid", res.data.userid);
                         }
                     }
                 }).catch(error => {
@@ -509,6 +510,11 @@ const Register = () => {
 }
 
 const Home = () => {
+
+    //Handle logged in user
+    const [loggedInUser, setLoggedInUser] = useState("");
+
+
     const [open, setOpen] = useState(false);
     const [pageContent, setPageContent] = useState("");
     const [todayDate, setTodayDate] = useState("");
@@ -671,6 +677,18 @@ const Home = () => {
 
     }, []);
 
+    // //Retrieve the current logged in user
+    // useEffect(() => {
+    //     // const loggedInUser = localStorage.getItem("username");
+    //     // if (loggedInUser) {
+    //     //     console.log("retrieved logged in user ", loggedInUser);
+    //     //     setLoggedInUser(loggedInUser);
+    //     // } else {
+    //     //     console.log("did not retrieve user");
+    //     // }
+    //
+    // }, []);
+
     //Call APIs for events and notes
     useEffect(()=> {
         getEventsAndNotes();
@@ -692,8 +710,14 @@ const Home = () => {
 
 
     const getEventsAndNotes = () => {
+        const loggedInUser = localStorage.getItem("userid");
         console.log("getevents");
-        instance.get(backendURL + `/events`)
+        console.log("logged in user is ", loggedInUser);
+
+        const user = {
+            userid: loggedInUser,
+        }
+        instance.post(backendURL + `/events/user/`, user)
 
             .then((res) => {
                     console.log(res.data)

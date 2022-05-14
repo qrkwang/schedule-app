@@ -31,6 +31,30 @@ app.get('/events', async (req, res) => {
 
 })
 
+//Get Events By Username
+app.post('/events/user', async (req, res) => {
+  console.log("get events by username");
+  const { userid } = req.body
+
+  try {
+    const events = await prisma.event.findMany({
+       orderBy: [
+        {
+          dateFrom: 'asc',
+        },
+      ],
+       where: {
+        userId: userid,
+      },
+    })
+    res.status(200).json(events)
+  } catch (error) {
+    console.log("error is ", error);
+    res.status(400).send(error);
+  }
+
+})
+
 
 //Create
 app.post('/events', async (req, res) => {
@@ -358,7 +382,7 @@ app.post('/login', async (req, res) => {
 
       if (password == users.password) {
         console.log("password matches");
-        res.status(201).send("SUCCESS");
+        res.status(201).send(users.id);
       } else {
         res.status(302).send("WRONG PASSWORD");
         console.log("password not match");
