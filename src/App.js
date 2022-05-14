@@ -560,6 +560,7 @@ const Home = () => {
         (event) => {
             // console.log("eventlist array length print out ", eventList);
 
+            console.log("calendar event clicked", event);
             const eventId = event.id;
             // console.log("event id from calendar is %s", event.id);
 
