@@ -33,8 +33,10 @@ app.get('/events', async (req, res) => {
 
 //Get Events By Username
 app.post('/events/user', async (req, res) => {
-  console.log("get events by username");
+  console.log("get events by id");
   const { userid } = req.body
+
+  console.log("user id is ", userid);
 
   try {
     const events = await prisma.event.findMany({
@@ -44,7 +46,7 @@ app.post('/events/user', async (req, res) => {
         },
       ],
        where: {
-        userId: userid,
+        userId:  parseInt(userid),
       },
     })
     res.status(200).json(events)
@@ -82,6 +84,29 @@ app.post('/events', async (req, res) => {
       res.status(404);
   }
 })
+
+//Create Events By Username
+app.post('/events/user/create/', async (req, res) => {
+  console.log("create events by id");
+  const { eventTitle, eventDescription, dateTo, dateFrom, userId } = req.body
+
+  console.log("user id is ", userId);
+
+  try {
+  const result = await prisma.event.create({
+      data: {
+        eventTitle, eventDescription, dateTo, dateFrom, userId: parseInt(userId),
+        },
+    })
+
+    res.status(201).json(result)  
+  } catch (error) {
+    console.log("error is ", error);
+    res.status(400).send(error);
+  }
+
+})
+
 
 //Update
 app.put('/events/:id', async (req, res) => {
@@ -370,6 +395,7 @@ app.post('/login', async (req, res) => {
        },
     })
 
+    console.log("users obj", users);
     //Check if username exist first, if exist then validate password. If not exist, send back code 301. 
     //If password not correct, send back code 302.
 
@@ -382,7 +408,7 @@ app.post('/login', async (req, res) => {
 
       if (password == users.password) {
         console.log("password matches");
-        res.status(201).send(users.id);
+        res.status(201).send(String(users.id));
       } else {
         res.status(302).send("WRONG PASSWORD");
         console.log("password not match");

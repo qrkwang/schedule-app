@@ -107,20 +107,20 @@ const Login = () => {
                 password: password,
             };
 
-            console.log("user obj is ", user);
             //Do login request here
             instance.post(backendURL + `/login`, user)
                 .then(res => {
                     // console.log(res);
                     // console.log(res.data);
                     console.log("response code is " , res.status);
+
                     if (res.status === 201) {
                         //Login successfully
                         {
-                            console.log("user id is ", res.data.userid);
+                            console.log("user id is ", res.data);
 
                             navigate(`/`);
-                            localStorage.setItem("userid", res.data.userid);
+                            localStorage.setItem("userid", res.data); // The returned data obj contains userId
                         }
                     }
                 }).catch(error => {
@@ -511,10 +511,6 @@ const Register = () => {
 
 const Home = () => {
 
-    //Handle logged in user
-    const [loggedInUser, setLoggedInUser] = useState("");
-
-
     const [open, setOpen] = useState(false);
     const [pageContent, setPageContent] = useState("");
     const [todayDate, setTodayDate] = useState("");
@@ -606,9 +602,10 @@ const Home = () => {
                 eventDescription: eventDescription,
                 dateTo: dateTo,
                 dateFrom: dateFrom,
+                userId: localStorage.getItem("userid"),
             };
 
-            instance.post(backendURL + `/events`, event)
+            instance.post(backendURL + `/events/user/create`, event)
                 .then(res => {
                     console.log(res);
                     console.log(res.data);
