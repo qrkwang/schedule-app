@@ -34,9 +34,9 @@ app.get('/events', async (req, res) => {
 //Get Events By Username
 app.post('/events/user', async (req, res) => {
   console.log("get events by id");
-  const { userid } = req.body
+  const { userId } = req.body
 
-  console.log("user id is ", userid);
+  console.log("user id is ", userId);
 
   try {
     const events = await prisma.event.findMany({
@@ -46,7 +46,7 @@ app.post('/events/user', async (req, res) => {
         },
       ],
        where: {
-        userId:  parseInt(userid),
+        userId:  parseInt(userId),
       },
     })
     res.status(200).json(events)
@@ -111,16 +111,19 @@ app.post('/events/user/create/', async (req, res) => {
 //Update
 app.put('/events/:id', async (req, res) => {
   console.log(req.body);
-  const { eventTitle, eventDescription, dateTo, dateFrom, isDone } = req.body;
+  const { eventTitle, eventDescription, dateTo, dateFrom, isDone, userId } = req.body;
   const { id } = req.params;
 
 
   console.log(eventTitle, eventDescription, dateTo, dateFrom, isDone);
   try {
 
-  const result = await prisma.event.update({
+  const result = await prisma.event.updateMany({
       where: {
-        id: parseInt(id),
+        // user_query: {
+          id: parseInt(id),
+          userId: parseInt(userId),
+        // }
       },
       data: {
           isDone: isDone,
@@ -186,6 +189,33 @@ app.get('/notes', async (req, res) => {
 
 })
 
+
+//Get Notes By userid
+app.post('/notes/user', async (req, res) => {
+  console.log("get notes by id");
+  const { userId } = req.body
+
+  console.log("user id is ", userId);
+
+  try {
+    const events = await prisma.note.findMany({
+       orderBy: [
+        {
+          createdAt: 'asc',
+        },
+      ],
+       where: {
+        userId:  parseInt(userId),
+      },
+    })
+    res.status(200).json(events)
+  } catch (error) {
+    console.log("error is ", error);
+    res.status(400).send(error);
+  }
+
+})
+
 //Create
 app.post('/notes', async (req, res) => {
   console.log(req.body);
@@ -213,19 +243,50 @@ app.post('/notes', async (req, res) => {
   }
 })
 
+//Create notes by user id
+app.post('/notes/user/create', async (req, res) => {
+  console.log(req.body);
+
+  const { noteTitle, noteDescription, userId } = req.body
+
+  console.log(noteTitle, noteDescription);
+
+  try {
+
+  const result = await prisma.note.create({
+      data: {
+        noteTitle, noteDescription, userId: parseInt(userId)
+        },
+    })
+
+  res.status(201).json(result)  
+
+  } catch (e: any) {
+
+
+      console.log("error, message is", e.message);
+      console.log("error is", e)
+    
+      res.status(404);
+  }
+})
+
 //Update
 app.put('/notes/:id', async (req, res) => {
   console.log(req.body);
-  const { noteTitle, noteDescription, isDone } = req.body;
+  const { noteTitle, noteDescription, isDone, userId } = req.body;
   const { id } = req.params;
 
 
   console.log(noteTitle, noteDescription, isDone);
   try {
 
-  const result = await prisma.note.update({
+  const result = await prisma.note.updateMany({
       where: {
-        id: parseInt(id),
+       // user_query: {
+          id: parseInt(id),
+          userId: parseInt(userId),
+        // }
       },
       data: {
           isDone: isDone,
@@ -322,64 +383,6 @@ app.post('/users', async (req, res) => {
       // res.status(404);
   }
 
-})
-
-//Update
-app.put('/notes/:id', async (req, res) => {
-  console.log(req.body);
-  const { noteTitle, noteDescription, isDone } = req.body;
-  const { id } = req.params;
-
-
-  console.log(noteTitle, noteDescription, isDone);
-  try {
-
-  const result = await prisma.note.update({
-      where: {
-        id: parseInt(id),
-      },
-      data: {
-          isDone: isDone,
-      },
-    })
-
-  res.status(201).json(result)  
-
-  } catch (e: any) {
-
-
-      console.log("error, message is", e.message);
-      console.log("error is", e)
-    
-      res.status(404);
-  }
-})
-
-//Delete
-app.delete('/notes/:id', async (req, res) => {
-  console.log(req.body);
-  const { id } = req.params;
-
-  console.log(id);
-
-  try {
-
-  const result = await prisma.note.delete({
-      where: {
-        id: parseInt(id),
-      },
-    })
-
-  res.status(201).json(result)  
-
-  } catch (e: any) {
-
-
-      console.log("error, message is", e.message);
-      console.log("error is", e)
-      
-      res.status(404);
-  }
 })
 
 //LOGIN

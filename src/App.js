@@ -542,6 +542,8 @@ const Home = () => {
     //Calendar Values
     const [events, setCalendarEvents] = useState([])
 
+    //Retrieve logged in user from localStorage and store into global var
+    const userId = localStorage.getItem("userid");
 
     const MyCalendar = props => (
         <div>
@@ -605,7 +607,7 @@ const Home = () => {
                 eventDescription: eventDescription,
                 dateTo: dateTo,
                 dateFrom: dateFrom,
-                userId: localStorage.getItem("userid"),
+                userId: userId,
             };
 
             instance.post(backendURL + `/events/user/create`, event)
@@ -618,9 +620,10 @@ const Home = () => {
             const note = {
                 noteTitle: noteTitle,
                 noteDescription: noteDescription,
+                userId: userId,
             };
 
-            instance.post(backendURL + `/notes`, note)
+            instance.post(backendURL + `/notes/user/create`, note)
                 .then(res => {
                     console.log(res);
                     console.log(res.data);
@@ -710,12 +713,12 @@ const Home = () => {
 
 
     const getEventsAndNotes = () => {
-        const loggedInUser = localStorage.getItem("userid");
+        const loggedInUser = userId;
         console.log("getevents");
         console.log("logged in user is ", loggedInUser);
 
         const user = {
-            userid: loggedInUser,
+            userId: loggedInUser,
         }
         instance.post(backendURL + `/events/user/`, user)
 
@@ -783,7 +786,8 @@ const Home = () => {
             .catch((err) => console.error(err));
 
         console.log("get notes");
-        instance.get(backendURL + `/notes`)
+
+        instance.post(backendURL + `/notes/user`, user)
             .then((res) => {
                 console.log(res.data)
                 const arrayNotes = [];
@@ -812,7 +816,7 @@ const Home = () => {
     const handleLogout = () => {
         console.log("logging out");
         localStorage.removeItem("userid");
-        console.log("have removed userid ", localStorage.getItem("userid"));
+        console.log("have removed userid ", userId);
         navigate(`/login`, {replace: true});
     };
 
@@ -858,6 +862,7 @@ const Home = () => {
                 dateTo: checkedItem.dateTo,
                 dateFrom: checkedItem.dateFrom,
                 isDone: !checkedItem.isDone,
+                userId: userId,
             };
 
             //Axios post update to item isDone
@@ -871,6 +876,8 @@ const Home = () => {
                 noteTitle: checkedItem.eventTitle,
                 noteDescription: checkedItem.eventDescription,
                 isDone: !checkedItem.isDone,
+                userId: userId,
+
             };
 
             //Axios post update to item isDone
@@ -1286,7 +1293,7 @@ const Home = () => {
         }
     }
 
-    return localStorage.getItem('userid') !== null ? (
+    return userId !== null ? (
         <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={{xs:1, sm: 1, md:2, }}>
                 <Grid item xs={12}>
