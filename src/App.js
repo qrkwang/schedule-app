@@ -38,8 +38,9 @@ import {
     BrowserRouter,
     Routes,
     Route,
-    Link, useNavigate
+    Link, useNavigate, Navigate
 } from "react-router-dom";
+import {grey, orange, purple} from "@mui/material/colors";
 
 const localizer = momentLocalizer(moment);
 
@@ -47,7 +48,7 @@ const localizer = momentLocalizer(moment);
 //Made axios global
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
-const backendURL = `http://192.168.26.148:3000`
+const backendURL = `http://192.168.68.100:3000`
 // const Item = styled(Paper)(({ theme }) => ({
 //     backgroundColor: '#DDDDDD',
 //     ...theme.typography.body2,
@@ -119,8 +120,8 @@ const Login = () => {
                         {
                             console.log("user id is ", res.data);
 
-                            navigate(`/`);
                             localStorage.setItem("userid", res.data); // The returned data obj contains userId
+                            navigate(`/`);
                         }
                     }
                 }).catch(error => {
@@ -255,7 +256,7 @@ const Login = () => {
                 >
                     Login
                 </Button>
-                <Grid container style={{ paddingTop: "10px" }}>
+                <Grid container style={{ paddingTop: "10px" } }>
                     <Grid item>
                         <Link to="/register" variant="body2">
                             {"Don't have an account? Sign Up"}
@@ -510,6 +511,7 @@ const Register = () => {
 }
 
 const Home = () => {
+    let navigate = useNavigate();
 
     const [open, setOpen] = useState(false);
     const [pageContent, setPageContent] = useState("");
@@ -560,13 +562,12 @@ const Home = () => {
         (event) => {
             // console.log("eventlist array length print out ", eventList);
 
-            console.log("calendar event clicked", event);
             const eventId = event.id;
             // console.log("event id from calendar is %s", event.id);
 
-            const eventItem = eventList.filter(eventObj => eventObj.id === eventId).at(0);
+            //Search for the clicked event in calendar event list.
+            const eventItem = events.filter(eventObj => eventObj.id === eventId).at(0);
 
-            console.log("event item clicked", eventItem);
             handleClickOpen("eventItem", eventItem);
 
 
@@ -576,11 +577,12 @@ const Home = () => {
 
     //Handle dialog
     const handleClickOpen = (page, eventItem) => {
+        // console.log("eventitem received is", eventItem);
         // console.log("handle click open " + page);
         // console.log("handle click open eventitem is  " + JSON.stringify(eventItem));
 
         if(typeof eventItem !== "undefined") {
-            // console.log("handle click open " + eventItem.eventTitle);
+            // console.log("handle click open " + eventItem.title);
             setCurrentClickedItem(eventItem);
         }
         setPageContent(page);
@@ -733,7 +735,9 @@ const Home = () => {
                         // console.log("index", index);
                         const itemEventObj = {
                             id: eventItem.id,
+                            eventTitle: eventItem.eventTitle,
                             title: eventItem.eventTitle,
+                            eventDescription: eventItem.eventDescription,
                             start: moment(eventItem.dateFrom).toDate(),
                             end: moment(eventItem.dateTo).toDate(),
 
@@ -805,7 +809,12 @@ const Home = () => {
         }
 
 
-
+    const handleLogout = () => {
+        console.log("logging out");
+        localStorage.removeItem("userid");
+        console.log("have removed userid ", localStorage.getItem("userid"));
+        navigate(`/login`, {replace: true});
+    };
 
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -1277,11 +1286,11 @@ const Home = () => {
         }
     }
 
-    return (
+    return localStorage.getItem('userid') !== null ? (
         <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={{xs:1, sm: 1, md:2, }}>
                 <Grid item xs={12}>
-                    <div style = {fontStyle}> { todayDate } </div>
+                    <div style = {fontStyle}> { todayDate }  </div>
                     <Divider/>
                 </Grid>
                 <Grid item xs={8}>
@@ -1299,31 +1308,41 @@ const Home = () => {
                     </Box>
 
                 </Grid>
-                <Grid item xs={12}>
-                    <div style = {{textAlign: 'center'}}>
+                <Grid item xs={12} style = {{textAlign: 'center' }}>
+
                         <Button
-                            variant = "contained"
-                            id="basic-button"
-                            aria-controls={menuOpen ? 'basic-menu' : undefined}
-                            aria-haspopup="true"
-                            aria-expanded={menuOpen ? 'true' : undefined}
-                            onClick={handleClick}
-                        >
-                            <text style = {{ fontWeight: 'bold', fontSize: '0.8vmax'}}>Add Items</text>
-                        </Button>
-                        <Menu
-                            id="basic-menu"
-                            anchorEl={anchorEl}
-                            open={menuOpen}
-                            onClose={handleClose}
-                            MenuListProps={{
-                                'aria-labelledby': 'basic-button',
-                            }}
-                        >
-                            <MenuItem onClick={addUpcoming}>Add Upcoming</MenuItem>
-                            <MenuItem onClick={addNotes}>Add Notes</MenuItem>
-                        </Menu>
-                    </div>
+                                variant = "contained"
+                                id="basic-button"
+                                aria-controls={menuOpen ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={menuOpen ? 'true' : undefined}
+                                onClick={handleClick}
+                                style = {{marginRight: "5px"}}
+                            >
+                                <text style = {{ fontWeight: 'bold', fontSize: '0.8vmax'}}>Add Items</text>
+                            </Button>
+
+                            <Button
+                                style = {{marginLeft: "5px", backgroundColor: orange[500],
+                                }}
+                                variant = "contained"
+                                id="basic-button"
+                                onClick={handleLogout}
+                            >
+                                <text style = {{ fontWeight: 'bold', fontSize: '0.8vmax'}}>Logout</text>
+                            </Button>
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={anchorEl}
+                                open={menuOpen}
+                                onClose={handleClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem onClick={addUpcoming}>Add Upcoming</MenuItem>
+                                <MenuItem onClick={addNotes}>Add Notes</MenuItem>
+                            </Menu>
                 </Grid>
                 <Grid item xs={8}>
                 </Grid>
@@ -1334,6 +1353,8 @@ const Home = () => {
 
         </Box>
 
+    ) : (
+        <Navigate replace = {true} to = '/login'></Navigate>
     )
 }
 function App() {
