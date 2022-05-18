@@ -3,53 +3,58 @@ Bjavascript:S1128"&Remove this unused import of 'styled'.(³Œüº
 Ajavascript:S1128"%Remove this unused import of 'Paper'.(ÀÓÛÉ
 Ljavascript:S1128"+Remove this unused import of 'DialogProps'.(©‡í‡üÿÿÿÿ
 Mjavascript:S1128"1Remove this unused import of 'DialogContentText'.( Ã‹
-:javascript:S125"Remove this commented out code.(¥›
-Ejavascript:S1128+"$Remove this unused import of 'grey'.(ÑÑ¸Õùÿÿÿÿ
-Gjavascript:S1128+"&Remove this unused import of 'purple'.(ÑÑ¸Õùÿÿÿÿ
-:javascript:S1254"Remove this commented out code.(²ø°”
-?javascript:S125r"Remove this commented out code.(¾‚Çïúÿÿÿÿ
-;javascript:S125‚"Remove this commented out code.(…ÂóŸ
-fjavascript:S3358¦"DExtract this nested ternary operation into an independent statement.(ûĞéšşÿÿÿÿ
-fjavascript:S3358©"DExtract this nested ternary operation into an independent statement.(ó¯¦‹üÿÿÿÿ
-fjavascript:S3358¸"DExtract this nested ternary operation into an independent statement.(ûĞéšşÿÿÿÿ
-fjavascript:S3358½"DExtract this nested ternary operation into an independent statement.(ó¯¦‹üÿÿÿÿ
-@javascript:S125Ë"Remove this commented out code.(¾‚Çïúÿÿÿÿ
-yjavascript:S4144ç"WUpdate this function so that its implementation is not identical to the one on line 93.(¬³ßûÿÿÿÿ
-fjavascript:S3358ı"DExtract this nested ternary operation into an independent statement.(’ë°Èÿÿÿÿÿ
-fjavascript:S3358€"DExtract this nested ternary operation into an independent statement.(ó¯¦‹üÿÿÿÿ
-ajavascript:S3358"DExtract this nested ternary operation into an independent statement.(’ÍÂ„
-fjavascript:S3358’"DExtract this nested ternary operation into an independent statement.(ó¯¦‹üÿÿÿÿ
-;javascript:S125â"Remove this commented out code.(³‘Ş­
-vjavascript:S3776"TRefactor this function to reduce its Cognitive Complexity from 62 to the 15 allowed.(ï¾¾äşÿÿÿÿ
-djavascript:S1481ˆ"BRemove the declaration of the unused 'triggerNoteUpdate' variable.(ÅÒÆ°úÿÿÿÿ
-ajavascript:S1854ˆ"?Remove this useless assignment to variable "triggerNoteUpdate".(ÅÒÆ°úÿÿÿÿ
-gjavascript:S1481ˆ"ERemove the declaration of the unused 'setTriggerNoteUpdate' variable.(ÅÒÆ°úÿÿÿÿ
-djavascript:S1854ˆ"BRemove this useless assignment to variable "setTriggerNoteUpdate".(ÅÒÆ°úÿÿÿÿ
-Mjavascript:S1117Ÿ"0'events' is already declared in the upper scope.(­½–Š
-;javascript:S125µ"Remove this commented out code.(ØÕÏ¦
-@javascript:S125¸"Remove this commented out code.(òÏõıøÿÿÿÿ
-@javascript:S125Æ"Remove this commented out code.(·ğÁ²ùÿÿÿÿ
-;javascript:S125Ë"Remove this commented out code.(Ğ›•³
-;javascript:S125•"Remove this commented out code.(æğ†Ğ
-@javascript:S125«"Remove this commented out code.(Ñ˜ü‘úÿÿÿÿ
-@javascript:S125Â"Remove this commented out code.(ŸÌ™¡ıÿÿÿÿ
-;javascript:S125Ş"Remove this commented out code.(êÇü
-@javascript:S125á"Remove this commented out code.(¡µÿèûÿÿÿÿ
-;javascript:S125ó"Remove this commented out code.(×Ûóã
-@javascript:S125"Remove this commented out code.(ã‰‡íùÿÿÿÿ
-@javascript:S125‡"Remove this commented out code.(Ú£ºûÿÿÿÿ
-;javascript:S125‹"Remove this commented out code.(ó—ê¿
-@javascript:S125š"Remove this commented out code.(É¹àãúÿÿÿÿ
-@javascript:S125£"Remove this commented out code.(ã‰‡íùÿÿÿÿ
-@javascript:S125Ò"Remove this commented out code.(¯·óÂùÿÿÿÿ
-2javascript:S108ù"Empty block statement.(å¥‡
-:javascript:S125ÿ"Remove this commented out code.(è»»_
-@javascript:S125Š"Remove this commented out code.(òöÿÿÿÿÿ
-:javascript:S125–"Remove this commented out code.(õŒ®G
-;javascript:S125Î	"Remove this commented out code.(ÛêóØ
-;javascript:S125‹
-"Remove this commented out code.(àĞ¹í
-`javascript:S3358«
-"DExtract this nested ternary operation into an independent statement.(ûİ¶
-fjavascript:S3358­
-"DExtract this nested ternary operation into an independent statement.(ˆ„êıüÿÿÿÿ
+Ljavascript:S1128"+Remove this unused import of 'createTheme'.(í¹êÙûÿÿÿÿ
+:javascript:S125 "Remove this commented out code.(¥›
+Ejavascript:S1128,"$Remove this unused import of 'grey'.(ÑÑ¸Õùÿÿÿÿ
+Gjavascript:S1128,"&Remove this unused import of 'purple'.(ÑÑ¸Õùÿÿÿÿ
+Njavascript:S1128-"-Remove this unused import of 'ThemeProvider'.(¨ùıÿÿÿÿ
+Kjavascript:S1128-"*Remove this unused import of 'makeStyles'.(¨ùıÿÿÿÿ
+?javascript:S125n"Remove this commented out code.(¾‚Çïúÿÿÿÿ
+:javascript:S125~"Remove this commented out code.(…ÂóŸ
+fjavascript:S3358¢"DExtract this nested ternary operation into an independent statement.(ûĞéšşÿÿÿÿ
+fjavascript:S3358¥"DExtract this nested ternary operation into an independent statement.(ó¯¦‹üÿÿÿÿ
+fjavascript:S3358´"DExtract this nested ternary operation into an independent statement.(ûĞéšşÿÿÿÿ
+fjavascript:S3358¹"DExtract this nested ternary operation into an independent statement.(ó¯¦‹üÿÿÿÿ
+@javascript:S125Ç"Remove this commented out code.(¾‚Çïúÿÿÿÿ
+yjavascript:S4144ã"WUpdate this function so that its implementation is not identical to the one on line 89.(¬³ßûÿÿÿÿ
+fjavascript:S3358ù"DExtract this nested ternary operation into an independent statement.(’ë°Èÿÿÿÿÿ
+fjavascript:S3358ü"DExtract this nested ternary operation into an independent statement.(ó¯¦‹üÿÿÿÿ
+ajavascript:S3358‰"DExtract this nested ternary operation into an independent statement.(’ÍÂ„
+fjavascript:S3358"DExtract this nested ternary operation into an independent statement.(ó¯¦‹üÿÿÿÿ
+;javascript:S125Ş"Remove this commented out code.(³‘Ş­
+vjavascript:S3776ı"TRefactor this function to reduce its Cognitive Complexity from 77 to the 15 allowed.(ï¾¾äşÿÿÿÿ
+djavascript:S1481…"BRemove the declaration of the unused 'triggerNoteUpdate' variable.(ÅÒÆ°úÿÿÿÿ
+ajavascript:S1854…"?Remove this useless assignment to variable "triggerNoteUpdate".(ÅÒÆ°úÿÿÿÿ
+gjavascript:S1481…"ERemove the declaration of the unused 'setTriggerNoteUpdate' variable.(ÅÒÆ°úÿÿÿÿ
+djavascript:S1854…"BRemove this useless assignment to variable "setTriggerNoteUpdate".(ÅÒÆ°úÿÿÿÿ
+Mjavascript:S1117¡"0'events' is already declared in the upper scope.(­½–Š
+@javascript:S125³"Remove this commented out code.(èœôƒÿÿÿÿÿ
+;javascript:S125Æ"Remove this commented out code.(ØÕÏ¦
+@javascript:S125É"Remove this commented out code.(òÏõıøÿÿÿÿ
+@javascript:S125×"Remove this commented out code.(·ğÁ²ùÿÿÿÿ
+;javascript:S125Ü"Remove this commented out code.(Ğ›•³
+:javascript:S125¡"Remove this commented out code.(ë¢¹W
+@javascript:S125¥"Remove this commented out code.(ë×ÏÒÿÿÿÿÿ
+:javascript:S125¬"Remove this commented out code.(°Ä+
+;javascript:S125Ç"Remove this commented out code.(æğ†Ğ
+@javascript:S125İ"Remove this commented out code.(Ñ˜ü‘úÿÿÿÿ
+@javascript:S125ô"Remove this commented out code.(ŸÌ™¡ıÿÿÿÿ
+;javascript:S125"Remove this commented out code.(êÇü
+@javascript:S125ª"Remove this commented out code.(®Í÷ÿÿÿÿÿ
+:javascript:S125¬"Remove this commented out code.(Øß–?
+;javascript:S125³"Remove this commented out code.(×Ûóã
+@javascript:S125¿"Remove this commented out code.(ã‰‡íùÿÿÿÿ
+@javascript:S125Ô"Remove this commented out code.(Ú£ºûÿÿÿÿ
+;javascript:S125Ø"Remove this commented out code.(ó—ê¿
+@javascript:S125ç"Remove this commented out code.(É¹àãúÿÿÿÿ
+@javascript:S125ğ"Remove this commented out code.(ã‰‡íùÿÿÿÿ
+@javascript:S125Ÿ"Remove this commented out code.(¯·óÂùÿÿÿÿ
+Gjavascript:S125µ"Remove this commented out code.(¾‚Çïúÿÿÿÿ8ˆ²¦¯0
+2javascript:S108Æ"Empty block statement.(å¥‡
+:javascript:S125Ì"Remove this commented out code.(è»»_
+@javascript:S125ç"Remove this commented out code.(òöÿÿÿÿÿ
+:javascript:S125ğ"Remove this commented out code.(õŒ®G
+;javascript:S125˜"Remove this commented out code.(ÛêóØ
+;javascript:S125Ù"Remove this commented out code.(àĞ¹í
+`javascript:S3358€"DExtract this nested ternary operation into an independent statement.(ûİ¶
+fjavascript:S3358‚"DExtract this nested ternary operation into an independent statement.(ˆ„êıüÿÿÿÿ

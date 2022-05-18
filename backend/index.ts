@@ -31,14 +31,127 @@ app.get('/events', async (req, res) => {
 
 })
 
+// //Get Events By Username
+// app.post('/events/user', async (req, res) => {
+//   console.log("get events by id");
+//   const { userId } = req.body
+
+//   // console.log("user id is ", userId);
+
+//   try {
+    
+//     const events = await prisma.event.findMany({
+//        orderBy: [
+//         {
+//           dateFrom: 'asc',
+//         },
+//       ],
+//        where: {
+//         userId:  parseInt(userId),
+//       },
+//     })
+
+
+//     let newArray: Array<Object> = [];
+//     let indexRecurrenceEvents = -1;
+//     //for loop each event, check for weekly, monthly or yearly then populate more events
+//     const newEvents = Promise.all(events.map(event => {
+
+//       newArray.push(event);
+//       // console.log(event);
+//       // console.log("type of event", typeof event);
+
+
+//       // console.log("event recurrence is ", event.recurrence);
+
+//       var newDateFrom;
+//       var newDateTo;
+
+//       if (event.recurrence === "weekly") {
+//         //add recurrence for 52 weeks ahead
+//         let currentDateFrom = event.dateFrom;
+//         let currentDateTo = event.dateTo;
+
+//         console.log(typeof currentDateTo);
+
+//         // console.log("first currentDateFrom", currentDateFrom);
+//         // console.log("first currentDateTo", currentDateTo);
+
+
+//         for (let i = 0; i < 52; i++) {
+//           newDateFrom = new Date(currentDateFrom);
+//           newDateFrom.setDate(newDateFrom.getDate() + 7 * i);
+//           newDateTo   = new Date(currentDateTo);
+//           newDateTo.setDate(newDateTo.getDate() + 7 * i);
+
+//         // console.log("after add", newDateFrom);
+//         // console.log("after add", newDateTo);
+            
+//             let newEvent = {
+//               recurrenceId: indexRecurrenceEvents,
+//               id: event.id,
+//               eventTitle: event.eventTitle,
+//               eventDescription: event.eventDescription,
+//               dateFrom: newDateFrom,
+//               dateTo: newDateTo,
+//               isRecurring: true,
+//               recurrence: event.recurrence,
+
+//             }
+//             newArray.push(newEvent);
+//             indexRecurrenceEvents--;
+//         }
+
+//       } else if (event.recurrence === "monthly") {
+
+//       } else if (event.recurrence === "yearly") {
+ 
+//       } else {
+
+//       }
+
+
+//       //Old method using spread operator, but we simplified the database to reduce processing.
+//       // //Remove recurrence boolean and return as one column string.
+//       // let { weekly, monthly, yearly, ...newEvent} = event;
+
+//       // if (event.weekly) {
+
+//       //   console.log("new event", newEvent);
+//       //   return { newEvent, recurrence: "weekly"}
+
+
+//       // } else if (event.monthly) {
+//       //   // event["recurrence"] = 'monthly';
+//       //   return { newEvent, recurrence: "weekly"}
+
+//       // } else {
+//       //   return { newEvent, recurrence: "yearly"}
+//       // }
+//     } )
+//     )
+
+//     // console.log("events", newArray)
+
+//     res.status(200).json(newArray)
+//   } catch (error) {
+//     console.log("error is ", error);
+//     res.status(400).send(error);
+//   }
+
+// })
+
+
 //Get Events By Username
 app.post('/events/user', async (req, res) => {
+ 
   console.log("get events by id");
   const { userId } = req.body
 
-  console.log("user id is ", userId);
+  // console.log("user id is ", userId);
 
   try {
+
     const events = await prisma.event.findMany({
        orderBy: [
         {
@@ -49,7 +162,90 @@ app.post('/events/user', async (req, res) => {
         userId:  parseInt(userId),
       },
     })
-    res.status(200).json(events)
+
+
+    let newArray: Array<Object> = [];
+    let indexRecurrenceEvents = -1;
+    //for loop each event, check for weekly, monthly or yearly then populate more events
+    const newEvents = Promise.all(events.map(event => {
+
+      newArray.push(event);
+      // console.log(event);
+      // console.log("type of event", typeof event);
+
+
+      // console.log("event recurrence is ", event.recurrence);
+
+      var newDateFrom;
+      var newDateTo;
+
+      if (event.recurrence === "weekly") {
+        //add recurrence for 52 weeks ahead
+        let currentDateFrom = event.dateFrom;
+        let currentDateTo = event.dateTo;
+
+        console.log(typeof currentDateTo);
+
+        // console.log("first currentDateFrom", currentDateFrom);
+        // console.log("first currentDateTo", currentDateTo);
+
+
+        for (let i = 0; i < 52; i++) {
+          newDateFrom = new Date(currentDateFrom);
+          newDateFrom.setDate(newDateFrom.getDate() + 7 * i);
+          newDateTo   = new Date(currentDateTo);
+          newDateTo.setDate(newDateTo.getDate() + 7 * i);
+
+        // console.log("after add", newDateFrom);
+        // console.log("after add", newDateTo);
+            
+            let newEvent = {
+              recurrenceId: indexRecurrenceEvents,
+              id: event.id,
+              eventTitle: event.eventTitle,
+              eventDescription: event.eventDescription,
+              dateFrom: newDateFrom,
+              dateTo: newDateTo,
+              isRecurring: true,
+              recurrence: event.recurrence,
+
+            }
+            newArray.push(newEvent);
+            indexRecurrenceEvents--;
+        }
+
+      } else if (event.recurrence === "monthly") {
+
+      } else if (event.recurrence === "yearly") {
+ 
+      } else {
+
+      }
+
+
+      //Old method using spread operator, but we simplified the database to reduce processing.
+      // //Remove recurrence boolean and return as one column string.
+      // let { weekly, monthly, yearly, ...newEvent} = event;
+
+      // if (event.weekly) {
+
+      //   console.log("new event", newEvent);
+      //   return { newEvent, recurrence: "weekly"}
+
+
+      // } else if (event.monthly) {
+      //   // event["recurrence"] = 'monthly';
+      //   return { newEvent, recurrence: "weekly"}
+
+      // } else {
+      //   return { newEvent, recurrence: "yearly"}
+      // }
+    } )
+    )
+
+    // console.log("events", newArray)
+
+    res.status(200).json(newArray)
   } catch (error) {
     console.log("error is ", error);
     res.status(400).send(error);
@@ -88,14 +284,14 @@ app.post('/events', async (req, res) => {
 //Create Events By Username
 app.post('/events/user/create/', async (req, res) => {
   console.log("create events by id");
-  const { eventTitle, eventDescription, dateTo, dateFrom, userId } = req.body
+  const { eventTitle, eventDescription, dateTo, dateFrom, userId, recurrence} = req.body
 
-  console.log("user id is ", userId);
+  // console.log("user id is ", userId);
 
   try {
   const result = await prisma.event.create({
       data: {
-        eventTitle, eventDescription, dateTo, dateFrom, userId: parseInt(userId),
+        eventTitle, eventDescription, dateTo, dateFrom, userId: parseInt(userId), recurrence
         },
     })
 
@@ -307,11 +503,12 @@ app.put('/notes/:id', async (req, res) => {
 
 //Delete
 app.delete('/notes/:id', async (req, res) => {
+  console.log("delete notes by id");
+
   console.log(req.body);
   const { id } = req.params;
 
   console.log(id);
-
   try {
 
   const result = await prisma.note.delete({
