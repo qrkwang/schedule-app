@@ -176,51 +176,51 @@ app.post('/events/user', async (req, res) => {
 
       // console.log("event recurrence is ", event.recurrence);
 
-      var newDateFrom;
-      var newDateTo;
+      // var newDateFrom;
+      // var newDateTo;
 
-      if (event.recurrence === "weekly") {
+      // if (event.recurrence === "weekly") {
         //add recurrence for 52 weeks ahead
-        let currentDateFrom = event.dateFrom;
-        let currentDateTo = event.dateTo;
+        // let currentDateFrom = event.dateFrom;
+        // let currentDateTo = event.dateTo;
 
-        console.log(typeof currentDateTo);
+        // console.log(typeof currentDateTo);
 
         // console.log("first currentDateFrom", currentDateFrom);
         // console.log("first currentDateTo", currentDateTo);
 
 
-        for (let i = 0; i < 52; i++) {
-          newDateFrom = new Date(currentDateFrom);
-          newDateFrom.setDate(newDateFrom.getDate() + 7 * i);
-          newDateTo   = new Date(currentDateTo);
-          newDateTo.setDate(newDateTo.getDate() + 7 * i);
+      //   for (let i = 0; i < 52; i++) {
+      //     newDateFrom = new Date(currentDateFrom);
+      //     newDateFrom.setDate(newDateFrom.getDate() + 7 * i);
+      //     newDateTo   = new Date(currentDateTo);
+      //     newDateTo.setDate(newDateTo.getDate() + 7 * i);
 
-        // console.log("after add", newDateFrom);
-        // console.log("after add", newDateTo);
+      //   // console.log("after add", newDateFrom);
+      //   // console.log("after add", newDateTo);
             
-            let newEvent = {
-              recurrenceId: indexRecurrenceEvents,
-              id: event.id,
-              eventTitle: event.eventTitle,
-              eventDescription: event.eventDescription,
-              dateFrom: newDateFrom,
-              dateTo: newDateTo,
-              isRecurring: true,
-              recurrence: event.recurrence,
+      //       let newEvent = {
+      //         recurrenceId: indexRecurrenceEvents,
+      //         id: event.id,
+      //         eventTitle: event.eventTitle,
+      //         eventDescription: event.eventDescription,
+      //         dateFrom: newDateFrom,
+      //         dateTo: newDateTo,
+      //         isRecurring: true,
+      //         recurrence: event.recurrence,
 
-            }
-            newArray.push(newEvent);
-            indexRecurrenceEvents--;
-        }
+      //       }
+      //       newArray.push(newEvent);
+      //       indexRecurrenceEvents--;
+      //   }
 
-      } else if (event.recurrence === "monthly") {
+      // } else if (event.recurrence === "monthly") {
 
-      } else if (event.recurrence === "yearly") {
+      // } else if (event.recurrence === "yearly") {
  
-      } else {
+      // } else {
 
-      }
+      // }
 
 
       //Old method using spread operator, but we simplified the database to reduce processing.
@@ -254,46 +254,61 @@ app.post('/events/user', async (req, res) => {
 })
 
 
-//Create
-app.post('/events', async (req, res) => {
-  console.log(req.body);
-  const { eventTitle, eventDescription, dateTo, dateFrom } = req.body
+// //Create
+// app.post('/events', async (req, res) => {
+//   console.log(req.body);
+//   const { eventTitle, eventDescription, dateTo, dateFrom } = req.body
 
 
-  console.log(eventTitle, eventDescription, dateTo, dateFrom);
-  try {
+//   console.log(eventTitle, eventDescription, dateTo, dateFrom);
+//   try {
 
-  const result = await prisma.event.create({
-      data: {
-        eventTitle, eventDescription, dateTo, dateFrom, 
-        },
-    })
+//   const result = await prisma.event.create({
+//       data: {
+//         eventTitle, eventDescription, dateTo, dateFrom, 
+//         },
+//     })
 
-  res.status(201).json(result)  
+//   res.status(201).json(result)  
 
-  } catch (e: any) {
+//   } catch (e: any) {
 
 
-      console.log("error, message is", e.message);
-      console.log("error is", e)
+//       console.log("error, message is", e.message);
+//       console.log("error is", e)
     
-      res.status(404);
-  }
-})
+//       res.status(404);
+//   }
+// })
 
 //Create Events By Username
 app.post('/events/user/create/', async (req, res) => {
   console.log("create events by id");
   const { eventTitle, eventDescription, dateTo, dateFrom, userId, recurrence} = req.body
 
-  // console.log("user id is ", userId);
+  console.log("recurrence ", recurrence);
+
 
   try {
-  const result = await prisma.event.create({
+    let result;
+    if (recurrence) {
+      console.log("recurrence exists");
+        result = await prisma.event.create({
       data: {
         eventTitle, eventDescription, dateTo, dateFrom, userId: parseInt(userId), recurrence
         },
     })
+
+    } else {
+      console.log("recurrence does not exist");
+      result = await prisma.event.create({
+      data: {
+        eventTitle, eventDescription, dateTo, dateFrom, userId: parseInt(userId)
+        },
+    })
+
+    }
+
 
     res.status(201).json(result)  
   } catch (error) {
@@ -412,32 +427,32 @@ app.post('/notes/user', async (req, res) => {
 
 })
 
-//Create
-app.post('/notes', async (req, res) => {
-  console.log(req.body);
-  const { noteTitle, noteDescription } = req.body
+// //Create
+// app.post('/notes', async (req, res) => {
+//   console.log(req.body);
+//   const { noteTitle, noteDescription } = req.body
 
-  console.log(noteTitle, noteDescription);
+//   console.log(noteTitle, noteDescription);
 
-  try {
+//   try {
 
-  const result = await prisma.note.create({
-      data: {
-        noteTitle, noteDescription,  
-        },
-    })
+//   const result = await prisma.note.create({
+//       data: {
+//         noteTitle, noteDescription,  
+//         },
+//     })
 
-  res.status(201).json(result)  
+//   res.status(201).json(result)  
 
-  } catch (e: any) {
+//   } catch (e: any) {
 
 
-      console.log("error, message is", e.message);
-      console.log("error is", e)
+//       console.log("error, message is", e.message);
+//       console.log("error is", e)
     
-      res.status(404);
-  }
-})
+//       res.status(404);
+//   }
+// })
 
 //Create notes by user id
 app.post('/notes/user/create', async (req, res) => {

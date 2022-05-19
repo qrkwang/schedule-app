@@ -50,7 +50,8 @@ const localizer = momentLocalizer(moment);
 //Made axios global
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
-const backendURL = `http://192.168.68.100:3000`
+// const backendURL = `http://192.168.68.100:3000`
+const backendURL = `http://172.30.137.190:3000`
 
 
 const cardStyle  = {
@@ -624,10 +625,13 @@ const Home = () => {
         //determine recurrence, only 1 is possible.
         let recurrence = "";
         if (weeklyChecked){
+            console.log("weekly is checked");
             recurrence = "weekly";
         } else if (monthlyChecked) {
+            console.log("monthly is checked");
             recurrence = "monthly";
         } else if (yearlyChecked) {
+            console.log("yearly is checked");
             recurrence = "yearly";
         }
 
@@ -981,18 +985,27 @@ const Home = () => {
 
     const handleCheckBoxChange = (type) => {
         if (type === 1) {
+            console.log("weekly checked is ", weeklyChecked);
             setWeeklyChecked(!weeklyChecked);
+            console.log("weekly toggled to ", weeklyChecked);
+            //Disable other options
             setMonthlyDisabled(!monthlyDisabled)
             setYearlyDisabled(!yearlyDisabled)
         } else if (type === 2){
             setMonthlyChecked(!monthlyChecked);
+            //Disable other options
             setWeeklyDisabled(!weeklyDisabled)
             setYearlyDisabled(!yearlyDisabled)
         } else {
             setYearlyChecked(!yearlyChecked);
+            //Disable other options
             setMonthlyDisabled(!monthlyDisabled)
             setWeeklyDisabled(!weeklyDisabled)
         }
+        console.log("weekly checked", weeklyChecked);
+        console.log("monthly checked", monthlyChecked);
+        console.log("yearly checked", yearlyChecked);
+
     };
 
     function renderEventBoxContent() {

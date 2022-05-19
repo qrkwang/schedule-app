@@ -20,6 +20,7 @@ model Event {
   dateTo    DateTime
   isDone Boolean @default(false)
   recurrence String @db.VarChar(255) @default("")
+  userId Int 
 }
 
 
@@ -29,6 +30,7 @@ model Note {
   noteTitle String @db.VarChar(255)
   noteDescription String?   @db.VarChar(255)
   isDone Boolean @default(false)
+  userId Int
 }
 
 
