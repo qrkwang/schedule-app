@@ -50,8 +50,8 @@ const localizer = momentLocalizer(moment);
 //Made axios global
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
-// const backendURL = `http://192.168.68.100:3000`
-const backendURL = `http://172.30.137.190:3000`
+const backendURL = `http://192.168.68.100:3000`
+// const backendURL = `http://172.30.137.190:3000`
 
 
 const cardStyle  = {
@@ -645,12 +645,15 @@ const Home = () => {
                 recurrence: recurrence,
             };
 
-            console.log("event post", event);
+            // console.log("event post", event);
             instance.post(backendURL + `/events/user/create`, event)
                 .then(res => {
                     console.log("after create response is ", res);
                     console.log(res.data);
-                });
+                })
+                .catch(error => {
+                  console.log(error.response.data.error);
+                })
 
         } else if (addType === "note") {
             const note = {
@@ -665,11 +668,12 @@ const Home = () => {
                     console.log(res.data);
                 });
         }
-
+        // console.log("after post");
         //After post, then reset state to empty.
         resetFields();
         setOpen(false);
-
+        //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
+        // setTriggerEventUpdate(true);
 
     };
 
@@ -748,6 +752,7 @@ const Home = () => {
 
     //Call APIs for events and notes
     useEffect(()=> {
+        console.log("open or triggerEventUpdate is toggled");
         getEventsAndNotes();
 
         setTriggerEventUpdate(false);

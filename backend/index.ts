@@ -293,12 +293,37 @@ app.post('/events/user/create/', async (req, res) => {
     let result;
     if (recurrence) {
       console.log("recurrence exists");
-        result = await prisma.event.create({
-      data: {
-        eventTitle, eventDescription, dateTo, dateFrom, userId: parseInt(userId), recurrence
-        },
-    })
 
+      let multipleEventsArray = []; 
+      var newDateFrom = dateFrom; //start with intitial dateFrom
+      var newDateTo = dateTo; // start with initial dateTo
+
+      if (recurrence === "weekly") {
+
+          for (let i = 0; i < 52; i++) {
+
+            console.log("current datefrom", newDateFrom);;
+            console.log("current dateto", newDateTo);
+              
+            let newEvent = {
+              eventTitle: eventTitle,
+              eventDescription: eventDescription,
+              dateFrom: newDateFrom,
+              dateTo: newDateTo,
+              recurrence: recurrence,
+              userId: parseInt(userId),
+            }
+            multipleEventsArray.push(newEvent);
+            newDateFrom = new Date(newDateFrom);
+            newDateFrom.setDate(newDateFrom.getDate() + 7);
+            newDateTo   = new Date(newDateTo);
+            newDateTo.setDate(newDateTo.getDate() + 7);
+            }
+          
+          result = await prisma.event.createMany({
+            data: multipleEventsArray,
+          })
+      }
     } else {
       console.log("recurrence does not exist");
       result = await prisma.event.create({
