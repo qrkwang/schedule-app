@@ -50,8 +50,8 @@ const localizer = momentLocalizer(moment);
 //Made axios global
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
-const backendURL = `http://192.168.68.100:3000`
-// const backendURL = `http://172.30.137.190:3000`
+// const backendURL = `http://192.168.68.100:3000`
+const backendURL = `http://192.168.127.148:3000`
 
 
 const cardStyle  = {
@@ -698,11 +698,16 @@ const Home = () => {
         handleDialogClose();
     }
     const deleteAllRecurrences = (item) => {
+        console.log("deleting all recurrences");
         // console.log("item", item);
-        // console.log("item mainid", item.mainId);
-        if (item.mainId === 0) {
-            console.log("main id is not defined, item is not recurring");
+        console.log("item mainid", item.mainId);
+        if (!item.recurrence) {
+            console.log("event is not recurring, cannot delete");
         } else {
+            if (item.mainId === 0) {
+
+            }
+            console.log("event is recurring");
         // console.log("deleting item ", item);
         // console.log("type is ", type);
 
@@ -1441,6 +1446,7 @@ const Home = () => {
                                     margin="none"
                                     id="eventTitle"
                                     label="Event Title"
+                                    autoFocus
                                     fullWidth
                                     variant="standard"
                                     value={eventTitle}

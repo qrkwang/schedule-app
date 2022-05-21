@@ -303,10 +303,21 @@ app.post('/events/user/create/', async (req, res) => {
             //Add main event to get back the event id for adding recurring events later.
             result = await prisma.event.create({
                 data: {
-                    eventTitle, eventDescription, dateTo, dateFrom, recurrence, userId: parseInt(userId)
+                    eventTitle, eventDescription, dateTo, dateFrom, recurrence, userId: parseInt(userId),
                 },
+            }) 
+            //Update the main event item mainId column with it's own id.
+            result = await prisma.event.update({
+                where: {
+                    id: result.id,
+                },
+                data: {
+                    mainId: result.id,
+                }
             })
+
             // console.log("iteration 0 mainId is", result.id);
+            
             let mainEventId = result.id;
 
             if (recurrence === "weekly") {
@@ -440,6 +451,7 @@ app.put('/events/:id', async (req, res) => {
 
 //Delete Single Event
 app.delete('/events/:id', async (req, res) => {
+    console.log("deleting single event");
     console.log(req.body);
     const {id} = req.params;
 
@@ -467,12 +479,19 @@ app.delete('/events/:id', async (req, res) => {
 
 //Delete All Recurrence by main event Id
 app.delete('/events/recurrence/:id', async (req, res) => {
+    console.log("deleting all reurrence by main event id");
     console.log(req.body);
     const {id} = req.params;
 
     console.log(id);
 
+    if (id === "0") {
+        console.log("id is 0");
+        res.status(401).send();
+    }
+
     try {
+        console.log("start of try");
 
         const result = await prisma.event.deleteMany({
             where: {
