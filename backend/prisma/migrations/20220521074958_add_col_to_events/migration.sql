@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Event" ADD COLUMN     "mainId" INTEGER NOT NULL DEFAULT 0;

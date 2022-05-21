@@ -300,24 +300,38 @@ app.post('/events/user/create/', async (req, res) => {
 
       if (recurrence === "weekly") {
 
+        let mainEventId = 0;
           for (let i = 0; i < 52; i++) {
+            if (i == 0){     
+              const result = await prisma.event.create({
+                  data: {
+                    eventTitle, eventDescription, dateTo, dateFrom, recurrence, userId: parseInt(userId)
+                    },
+                })
+              // console.log("iteration 0 mainId is", result.id);
+              mainEventId = result.id;
 
-            console.log("current datefrom", newDateFrom);;
-            console.log("current dateto", newDateTo);
-              
-            let newEvent = {
-              eventTitle: eventTitle,
-              eventDescription: eventDescription,
-              dateFrom: newDateFrom,
-              dateTo: newDateTo,
-              recurrence: recurrence,
-              userId: parseInt(userId),
-            }
-            multipleEventsArray.push(newEvent);
-            newDateFrom = new Date(newDateFrom);
-            newDateFrom.setDate(newDateFrom.getDate() + 7);
-            newDateTo   = new Date(newDateTo);
-            newDateTo.setDate(newDateTo.getDate() + 7);
+            } else {
+
+              console.log("current datefrom", newDateFrom);;
+              console.log("current dateto", newDateTo);
+                
+              let newEvent = {
+                eventTitle: eventTitle,
+                eventDescription: eventDescription,
+                dateFrom: newDateFrom,
+                dateTo: newDateTo,
+                recurrence: recurrence,
+                userId: parseInt(userId),
+                mainId: mainEventId,
+              }
+              multipleEventsArray.push(newEvent);
+              }
+              //Iterate the dates to next week
+              newDateFrom = new Date(newDateFrom);
+              newDateFrom.setDate(newDateFrom.getDate() + 7);
+              newDateTo   = new Date(newDateTo);
+              newDateTo.setDate(newDateTo.getDate() + 7);
             }
           
           result = await prisma.event.createMany({
@@ -378,7 +392,7 @@ app.put('/events/:id', async (req, res) => {
   }
 })
 
-//Delete
+//Delete Single Event
 app.delete('/events/:id', async (req, res) => {
   console.log(req.body);
   const { id } = req.params;
@@ -391,6 +405,36 @@ app.delete('/events/:id', async (req, res) => {
       where: {
         id: parseInt(id),
       },
+    })
+
+  res.status(201).json(result)  
+
+  } catch (e: any) {
+
+
+      console.log("error, message is", e.message);
+      console.log("error is", e)
+      
+      res.status(404);
+  }
+})
+
+//Delete All Recurrence by main event Id
+app.delete('/events/recurrence/:id', async (req, res) => {
+  console.log(req.body);
+  const { id } = req.params;
+
+  console.log(id);
+
+  try {
+
+  const result = await prisma.event.deleteMany({
+     where: { 
+        OR: [
+            {mainId: parseInt(id)}, 
+            {id: parseInt(id)}
+          ]
+        }
     })
 
   res.status(201).json(result)  

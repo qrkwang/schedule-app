@@ -41,7 +41,7 @@ import {
     Route,
     Link, useNavigate, Navigate
 } from "react-router-dom";
-import {grey, orange, purple} from "@mui/material/colors";
+import {grey, lightBlue, orange, purple} from "@mui/material/colors";
 import {ThemeProvider, makeStyles} from "@mui/styles";
 
 const localizer = momentLocalizer(moment);
@@ -639,8 +639,8 @@ const Home = () => {
             const event = {
                 eventTitle: eventTitle,
                 eventDescription: eventDescription,
-                dateTo: dateTo,
                 dateFrom: dateFrom,
+                dateTo: dateTo,
                 userId: userId,
                 recurrence: recurrence,
             };
@@ -697,6 +697,23 @@ const Home = () => {
         }
         handleDialogClose();
     }
+    const deleteAllRecurrences = (item) => {
+        // console.log("item", item);
+        // console.log("item mainid", item.mainId);
+        if (item.mainId === 0) {
+            console.log("main id is not defined, item is not recurring");
+        } else {
+        // console.log("deleting item ", item);
+        // console.log("type is ", type);
+
+            // console.log("deleting event");
+            instance.delete(backendURL + `/events/recurrence/` + item.mainId)
+                .then(res => {
+                    console.log(res);
+                })
+        }
+        handleDialogClose();
+    }
 
     const resetFields = () => {
         setEventTitle("");
@@ -723,6 +740,25 @@ const Home = () => {
         return date1.getFullYear() === date2.getFullYear() &&
             date1.getMonth() === date2.getMonth() &&
             date1.getDate() === date2.getDate();
+    }
+
+    const areDatesWithin30Days = (date1, date2) => {
+        // console.log("date 1 ", date1)
+        // console.log("date 2", date2)
+        // console.log("date2 - date1", (date2-date1)/(1000*60*60*24));
+        // console.log("are within 30 days", (date2-date1)/(1000*60*60*24) <= 30 && (date2-date1)/(1000*60*60*24) >= 0)
+
+        return (date2-date1)/(1000*60*60*24) <= 30 && (date2-date1)/(1000*60*60*24) >= 0
+    }
+
+    const involvesToday = (todayDate, date2, date3) => {
+        // console.log("today date", todayDate);
+        // console.log("dateFrom", date2);
+        // console.log("dateTo", date3);
+        // console.log("today more than dateFrom", todayDate>=date2)
+        // console.log("today less than dateTo", todayDate<=date3)
+
+        return todayDate>=date2 && todayDate<=date3
     }
 
     //Update date text every second.
@@ -773,8 +809,8 @@ const Home = () => {
 
     const getEventsAndNotes = () => {
         const loggedInUser = userId;
-        console.log("getevents");
-        console.log("logged in user is ", loggedInUser);
+        // console.log("getevents");
+        // console.log("logged in user is ", loggedInUser);
 
         const user = {
             userId: loggedInUser,
@@ -812,8 +848,8 @@ const Home = () => {
                         //Dates are also formatted for better display.
                         eventItem.start = moment(eventItem.dateFrom).toDate()
                         eventItem.end = moment(eventItem.dateTo).toDate()
-                        eventItem.dateFrom = moment(eventItem.dateFrom).format('DD MMM YYYY h:mm:ss a')
-                        eventItem.dateTo = moment(eventItem.dateTo).format('DD MMM YYYY h:mm:ss a')
+                        eventItem.dateFrom = moment(eventItem.dateFrom).format('DD MMM YYYY h:mm a')
+                        eventItem.dateTo = moment(eventItem.dateTo).format('DD MMM YYYY h:mm a')
                         eventItem.title = eventItem.eventTitle;
 
                         // console.log("print recurrence id ", eventItem.recurrenceId);
@@ -821,17 +857,53 @@ const Home = () => {
                         // console.log("after change eventtitle", eventItem.eventTitle);
                         calendarEventsArr.push(eventItem);
 
+                        const formattedDateFrom = Date.parse(eventItem.dateFrom);
+                        const formattedDateTo = Date.parse(eventItem.dateTo);
+
                         //If event is before today and ends before today, do not display. Display everything else. <<
                         //Additional check for if event startdate or end date is within today.
-                        if ( todayDateAsDateType.getTime() >= Date.parse(eventItem.dateFrom) && todayDateAsDateType.getTime() >= Date.parse(eventItem.dateTo) && !areDatesOnSameDay(todayDateAsDateType, new Date(Date.parse(eventItem.dateFrom)))
-                            && !areDatesOnSameDay(todayDateAsDateType, new Date(Date.parse(eventItem.dateTo)))) {
-                            // console.log("Event starts and ends before today & is not within today, not displaying this.", eventItem.eventTitle);
-                            // console.log("datefrom",  Date.parse(eventItem.dateFrom));
-                            // console.log("dateto", Date.parse(eventItem.dateTo));
-                            // console.log("Today Date bigger than datefrom", todayDateAsDateType.getTime() > Date.parse(eventItem.dateFrom));
-                            // console.log("Today Date bigger than dateTo", todayDateAsDateType.getTime() > Date.parse(eventItem.dateTo));
+                        // if ( todayDateAsDateType.getTime() >= formattedDateFrom && todayDateAsDateType.getTime() >= formattedDateTo && !areDatesOnSameDay(todayDateAsDateType, new Date(formattedDateFrom))
+                        //     && !areDatesOnSameDay(todayDateAsDateType, new Date(formattedDateTo))) {
+                        //     console.log("this event has passed");
+                        //
+                        //     // if ( todayDateAsDateType.getTime() >= Date.parse(eventItem.dateFrom) && todayDateAsDateType.getTime() >= Date.parse(eventItem.dateTo) && !areDatesOnSameDay(todayDateAsDateType, new Date(Date.parse(eventItem.dateFrom)))
+                        //     //     && !areDatesOnSameDay(todayDateAsDateType, new Date(Date.parse(eventItem.dateTo)))) {
+                        //
+                        //     // console.log("Event starts and ends before today & is not within today, not displaying this.", eventItem.eventTitle);
+                        //     // console.log("datefrom",  Date.parse(eventItem.dateFrom));
+                        //     // console.log("dateto", Date.parse(eventItem.dateTo));
+                        //     // console.log("Today Date bigger than datefrom", todayDateAsDateType.getTime() > Date.parse(eventItem.dateFrom));
+                        //     // console.log("Today Date bigger than dateTo", todayDateAsDateType.getTime() > Date.parse(eventItem.dateTo));
+                        //
+                        // } else if (!areDatesWithin30Days(todayDateAsDateType.getTime(), formattedDateFrom)) {
+                        //     //Don't display events that are not in the same month and year
+                        //     console.log("this event is not within 30 days");
+                        // }
+                        //Display event if:
+                        // dates are within 30 days of today (counting downwards)
+                        // OR starting today
+                        // OR ending today
+                        // OR goes through today
+                        // if (todayDateAsDateType.getTime() <= formattedDateFrom && todayDateAsDateType.getTime() <= formattedDateTo && areDatesOnSameDay(todayDateAsDateType, new Date(formattedDateFrom)) && )
+                        let eventDatesOnSameDay = false;
+                        let eventInvolvesToday = false;
 
-                        } else {
+                        eventItem.displayEndingStr = false;
+                        if (areDatesOnSameDay(todayDateAsDateType, new Date(formattedDateTo))) {
+                            //Event ends today
+                            eventItem.displayEndingStr = true // to write "Ending on ... "
+
+                            eventDatesOnSameDay = true;
+                        }
+                        if (involvesToday(todayDateAsDateType.getTime(), formattedDateFrom, formattedDateTo)) {
+                            eventItem.displayEndingStr = true // to write "Ending on ... "
+                            eventInvolvesToday = true;
+                        }
+
+                        if (areDatesWithin30Days(todayDateAsDateType.getTime(), formattedDateFrom) || areDatesOnSameDay(todayDateAsDateType, new Date(formattedDateFrom)) || eventDatesOnSameDay
+                            || eventInvolvesToday)
+                        // else
+                         {
                             // Display if checks pass
                             arrayEvents.push(eventItem);
 
@@ -871,7 +943,7 @@ const Home = () => {
             )
             .catch((err) => console.error(err));
 
-        console.log("get notes");
+        // console.log("get notes");
 
         instance.post(backendURL + `/notes/user`, user)
             .then((res) => {
@@ -936,10 +1008,10 @@ const Home = () => {
         // const currentIndex = checked.indexOf(value);
         // const newChecked = [...checked];
 
-        console.log("current index toggle", value);
-        console.log("current item being checked", checkedItem.eventTitle);
-        console.log("current item being checked", type);
-        console.log("updating isDone from %s to %s", checkedItem.isDone, !checkedItem.isDone);
+        // console.log("current index toggle", value);
+        // console.log("current item being checked", checkedItem.eventTitle);
+        // console.log("current item being checked", type);
+        // console.log("updating isDone from %s to %s", checkedItem.isDone, !checkedItem.isDone);
 
         if (type === 1) {
             const event = {
@@ -954,7 +1026,7 @@ const Home = () => {
             //Axios post update to item isDone
             instance.put(backendURL + `/events/` + checkedItem.id, event)
                 .then(res => {
-                    console.log("")
+                    // console.log("")
                     // console.log(res);
                 })
         } else if (type === 2) {
@@ -1056,66 +1128,70 @@ const Home = () => {
                             // })
                             // console.log("event item isCheck result ", checkedResult);
                             //If event is recurring, render recurring events list item.
-                            if (eventItem.isRecurring === true) {
-                                return (
-                                    <ListItem
-                                        divider = {true}
-                                        key = {index}
-                                        secondaryAction={
-                                            // <ThemeProvider theme = {theme}>
-                                            <div>
-                                            <IconButton
-                                                // classes={{ root: classes.root, disabled: classes.disabled }}
-                                                aria-label="recurringIcon"
-                                                // disableRipple={true}
-                                                // disableTouchRipple={true}
-                                                // disableFocusRipple={true}
-                                                // color={'white'}
-                                                disabled
-                                                // className={{disable : classes.iconButton}}
-                                                // classes={{ disabled: classes.disabledButton }}
+                            // if (eventItem.recurrence) {
+                            //     return (
+                            //         <ListItem
+                            //             divider = {true}
+                            //             key = {index}
+                            //             secondaryAction={
+                            //                 // <ThemeProvider theme = {theme}>
+                            //                 <div>
+                            //                 <IconButton
+                            //                     // classes={{ root: classes.root, disabled: classes.disabled }}
+                            //                     aria-label="recurringIcon"
+                            //                     // disableRipple={true}
+                            //                     // disableTouchRipple={true}
+                            //                     // disableFocusRipple={true}
+                            //                     // color={'white'}
+                            //                     disabled
+                            //                     // className={{disable : classes.iconButton}}
+                            //                     // classes={{ disabled: classes.disabledButton }}
+                            //
+                            //                     // color="blue"
+                            //                 >
+                            //                     <EventRepeatIcon
+                            //                         style={{
+                            //                             transform: "scale(1.2)",
+                            //                         }}
+                            //                         edge="start"
+                            //                     />
+                            //                 </IconButton>
+                            //                 <Checkbox
+                            //                 style={{
+                            //                 transform: "scale(1.2)",
+                            //             }}
+                            //                 edge="start"
+                            //                 onChange={handleToggle(index, eventItem, 1)}
+                            //                 checked={checked.indexOf(index) !== -1}
+                            //                 />
+                            //                 </div>
+                            //                 // </ThemeProvider>
+                            //             }
+                            //         >
+                            //
+                            //             <ListItemText
+                            //                 disableTypography
+                            //                 onClick={() => itemClicked(eventItem, 1)}
+                            //                 primary= {<Typography style={{                 overflow: 'hidden',
+                            //                     fontSize: '17px', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }</Typography>}
+                            //                 secondary={  <Typography style = {{overflow: 'hidden' ,fontSize: '14px', color: '#515151'}}>
+                            //                     {eventItem.dateFrom}
+                            //                 </Typography>}
+                            //             />
+                            //         </ListItem>
+                            //     )
+                            // } else {
 
-                                                // color="blue"
-                                            >
-                                                <EventRepeatIcon
-                                                    style={{
-                                                        transform: "scale(1.2)",
-                                                    }}
-                                                    edge="start"
-                                                />
-                                            </IconButton>
-                                            <Checkbox
-                                            style={{
-                                            transform: "scale(1.2)",
-                                        }}
-                                            edge="start"
-                                            onChange={handleToggle(index, eventItem, 1)}
-                                            checked={checked.indexOf(index) !== -1}
-                                            />
-                                            </div>
-                                            // </ThemeProvider>
-                                        }
-                                    >
 
-                                        <ListItemText
-                                            disableTypography
-                                            onClick={() => itemClicked(eventItem, 1)}
-                                            primary= {<Typography style={{                 overflow: 'hidden',
-                                                fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }</Typography>}
-                                            // secondary={secondary ? 'Secondary text' : null}
-                                        />
-                                    </ListItem>
-                                )
-                            } else {
+                                // if (checked.indexOf(index) !== -1) { //If indexOf value is not -1, means it found something.
 
-
-                                if (checked.indexOf(index) !== -1) { //If indexOf value is not -1, means it found something.
-                                    //if checkbox is ticked, display completed colors
                                     return (
                                         <ListItem
                                             divider = {true}
                                             key = {index}
                                             secondaryAction={
+                                                //Show recurring icon if event is recurring type.
+                                                 eventItem.recurrence === "" ? (
                                                 <Checkbox
                                                     style={{
                                                         transform: "scale(1.2)",
@@ -1123,55 +1199,127 @@ const Home = () => {
                                                     edge="start"
                                                     onChange={handleToggle(index, eventItem, 1)}
                                                     checked={checked.indexOf(index) !== -1}
-                                                />
+                                                /> ) : (
+                                                     <div>
+                                                          <IconButton
+                                                             // classes={{ root: classes.root, disabled: classes.disabled }}
+                                                             aria-label="recurringIcon"
+                                                             // disableRipple={true}
+                                                             // disableTouchRipple={true}
+                                                             // disableFocusRipple={true}
+                                                             // color={'white'}
+                                                             disabled
+                                                             // className={{disable : classes.iconButton}}
+                                                             // classes={{ disabled: classes.disabledButton }}
+
+                                                             // color="blue"
+                                                         >
+                                                             <EventRepeatIcon
+                                                                 style={{
+                                                                     transform: "scale(1.2)",
+                                                                 }}
+                                                                 edge="start"
+                                                             />
+                                                         </IconButton>
+                                                         <Checkbox
+                                                             style={{
+                                                                 transform: "scale(1.2)",
+                                                             }}
+                                                             edge="start"
+                                                             onChange={handleToggle(index, eventItem, 1)}
+                                                             checked={checked.indexOf(index) !== -1}
+                                                         />
+                                                     </div>
+                                                )
                                             }
                                             style = {{
-                                                backgroundColor: "lightgreen"
+                                                //If event is done / checked, let the row be green.
+                                                backgroundColor: checked.indexOf(index) !== -1 && "lightgreen"
                                             }}
                                         >
                                             <ListItemText
                                                 disableTypography
                                                 onClick={() => itemClicked(eventItem, 1)}
-                                                primary= {<Typography style={{               textDecoration: "line-through",
-                                                    overflow: 'hidden',
-                                                    fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }</Typography>}
-                                                // secondary={secondary ? 'Secondary text' : null}
+                                                primary= {
+                                                    //if checkbox is ticked, display completed theme
+                                                    checked.indexOf(index) !== -1 ? (
+                                                            <Typography style={{               textDecoration: "line-through",
+                                                                overflow: 'hidden',
+                                                                fontSize: '17px', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }
+                                                            </Typography>
+                                                        ) : (
+                                                            //if checkbox unticked, display normal theme
+                                                        <Typography style={{                 overflow: 'hidden',
+                                                            fontSize: '17px', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }
+                                                        </Typography>
+                                                        )
+
+                                                }
+                                                secondary={  <Typography style = {{overflow: 'hidden' ,fontSize: '14px', color: '#515151'}}>
+
+                                                    { eventItem.displayEndingStr === false ?
+                                                        ( "Starting on " + moment(eventItem.start).format('DD MMM YYYY h:mm a') ) : ( "Ending on " + moment(eventItem.end).format('DD MMM YYYY h:mm a')) }
+                                                </Typography>}
                                             />
                                         </ListItem>
                                     )
-                                }
 
 
-                                else {
-                                    //if checkbox is not ticked, display normal colors
-                                    return (
 
-                                        <ListItem
-                                            divider = {true}
-                                            key = {index}
-                                            secondaryAction={
-                                                <Checkbox
-                                                    style={{
-                                                        transform: "scale(1.2)",
-                                                    }}
-                                                    edge="start"
-                                                    onChange={handleToggle(index, eventItem, 1)}
-                                                    checked={checked.indexOf(index) !== -1}
-                                                />
-                                            }
-                                        >
-
-                                            <ListItemText
-                                                disableTypography
-                                                onClick={() => itemClicked(eventItem, 1)}
-                                                primary= {<Typography style={{                 overflow: 'hidden',
-                                                    fontSize: '0.8vmax', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }</Typography>}
-                                                // secondary={secondary ? 'Secondary text' : null}
-                                            />
-                                        </ListItem>
-                                    )
-                                }
-                            }
+                                // else {
+                                //     //if checkbox is not ticked, display normal colors
+                                //     return (
+                                //
+                                //         <ListItem
+                                //             divider = {true}
+                                //             key = {index}
+                                //             secondaryAction={
+                                //                 eventItem.recurrence === "" ? (
+                                //                     <Checkbox
+                                //                         style={{
+                                //                             transform: "scale(1.2)",
+                                //                         }}
+                                //                         edge="start"
+                                //                         onChange={handleToggle(index, eventItem, 1)}
+                                //                         checked={checked.indexOf(index) !== -1}
+                                //                     /> ) : (
+                                //                     <div>
+                                //                         <IconButton
+                                //                             aria-label="recurringIcon"
+                                //                             disabled
+                                //                         >
+                                //                             <EventRepeatIcon
+                                //                                 style={{
+                                //                                     transform: "scale(1.2)",
+                                //                                 }}
+                                //                                 edge="start"
+                                //                             />
+                                //                         </IconButton>
+                                //                         <Checkbox
+                                //                             style={{
+                                //                                 transform: "scale(1.2)",
+                                //                             }}
+                                //                             edge="start"
+                                //                             onChange={handleToggle(index, eventItem, 1)}
+                                //                             checked={checked.indexOf(index) !== -1}
+                                //                         />
+                                //                     </div>
+                                //                 )
+                                //             }
+                                //         >
+                                //
+                                //             <ListItemText
+                                //                 disableTypography
+                                //                 onClick={() => itemClicked(eventItem, 1)}
+                                //                 primary= {<Typography style={{                 overflow: 'hidden',
+                                //                     fontSize: '17px', color: '#000000', marginRight: '1vmax'}}> {eventItem.eventTitle }</Typography>}
+                                //                 secondary={  <Typography style = {{overflow: 'hidden' ,fontSize: '14px', color: '#515151'}}>
+                                //                     {eventItem.start}
+                                //                 </Typography>}                                            />
+                                //         </ListItem>
+                                //     )
+                                // }
+                            // }
 
                         }) }
                     </List>
@@ -1313,6 +1461,17 @@ const Home = () => {
                                 />
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                                     <DatePicker
+                                        label="Date From"
+                                        value={dateFrom}
+                                        onChange={(newValue) => {
+                                            setDateFrom(newValue);
+                                        }}
+                                        renderInput={(params) => <TextField {...params} />}
+                                        InputProps={{ style: { fontSize: '1vmax' } }}
+                                        // InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                                    />
+
+                                    <DatePicker
                                         label="Date To"
                                         value={dateTo}
                                         onChange={(newValue) => {
@@ -1323,16 +1482,7 @@ const Home = () => {
                                         // InputLabelProps={{ style: { fontSize: '1vmax' } }}
                                     />
 
-                                    <DatePicker
-                                        label="Date From"
-                                        value={dateFrom}
-                                        onChange={(newValue) => {
-                                            setDateFrom(newValue);
-                                        }}
-                                        renderInput={(params) => <TextField {...params} />}
-                                        InputProps={{ style: { fontSize: '1vmax' } }}
-                                        // InputLabelProps={{ style: { fontSize: '1vmax' } }}
-                                    />
+
                                     <FormGroup>
 
                                     <FormControlLabel
@@ -1472,14 +1622,17 @@ const Home = () => {
 
                         <Typography style = {{fontSize: '1vmax'}}> Event Description: {currentClickedItem.eventDescription !== "" ? currentClickedItem.eventDescription : 'N/A'}</Typography>
 
-                        <Typography style = {{fontSize: '1vmax'}}> From: {currentClickedItem.dateFrom}</Typography>
-                        <Typography style = {{fontSize: '1vmax'}}> To: {currentClickedItem.dateTo}</Typography>
+                        <Typography style = {{fontSize: '1vmax'}}> From: {moment(currentClickedItem.start).format('DD MMM YYYY h:mm a')}</Typography>
+                        <Typography style = {{fontSize: '1vmax'}}> To: {moment(currentClickedItem.end).format('DD MMM YYYY h:mm a')}</Typography>
 
                         </Stack>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={ () => deleteItem(currentClickedItem, 1)}>Remove this</Button>
-                        <Button onClick={handleDialogClose}>Close</Button>
+                        {currentClickedItem.recurrence !== "" && (
+                        <Button variant = "outlined" color = "error"  onClick={ () => deleteAllRecurrences(currentClickedItem, 1)}>Remove all recurrences</Button> )}
+                        <Button variant = "outlined" color = "warning" onClick={ () => deleteItem(currentClickedItem, 1)}>Remove this</Button>
+                        <Button variant = "outlined" color = "primary"
+                                onClick={handleDialogClose}>Close</Button>
                     </DialogActions>
                 </Dialog>
             )
