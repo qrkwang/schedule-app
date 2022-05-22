@@ -34,6 +34,8 @@ import {
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateRangePicker } from "mui-daterange-picker";
+import { DateRange } from "mui-daterange-picker/src/types";
 
 import {
     BrowserRouter,
@@ -520,10 +522,9 @@ const Home = () => {
     //Form Values
     const [eventTitle, setEventTitle] = useState("");
     const [eventDescription, setEventDescription] = useState("");
-    const [dateFrom, setDateFrom] = useState(new Date());
-    const [dateTo, setDateTo] = useState(new Date());
     const [noteTitle, setNoteTitle] = useState("");
     const [noteDescription, setNoteDescription] = useState("");
+    // const [isTodayChecked, setTodayChecked] = useState(false);
     const [weeklyChecked, setWeeklyChecked] = useState(false);
     const [monthlyChecked, setMonthlyChecked] = useState(false);
     const [yearlyChecked, setYearlyChecked] = useState(false);
@@ -535,6 +536,14 @@ const Home = () => {
     const [currentClickedItem, setCurrentClickedItem] = useState("");
     const [checked, setChecked] = useState([]);
     // const [noteChecked, setNoteChecked] = useState([]);
+    //Form Date Pickers
+    const [dateRange, setDateRange] = React.useState<DateRange>({});
+    const [datePickerOpen, setDatePickerOpen] = React.useState(false);
+    const [dateFrom, setDateFrom] = useState(new Date());
+    const [dateTo, setDateTo] = useState(new Date());
+
+    const toggle = () => setDatePickerOpen(!setDatePickerOpen());
+
 
     const [noteList, setNoteList] = useState([]);
 
@@ -1064,7 +1073,11 @@ const Home = () => {
     };
 
     const handleCheckBoxChange = (type) => {
-        if (type === 1) {
+        if (type === 0) {
+            // console.log("istoday is checked");
+            // setTodayChecked(!isTodayChecked);
+
+        } else if (type === 1) {
             console.log("weekly checked is ", weeklyChecked);
             setWeeklyChecked(!weeklyChecked);
             console.log("weekly toggled to ", weeklyChecked);
@@ -1467,28 +1480,51 @@ const Home = () => {
                                     InputProps={{ style: { fontSize: '1vmax' } }}
                                     InputLabelProps={{ style: { fontSize: '1vmax' } }}
                                 />
-                                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                    <DatePicker
-                                        label="Date From"
-                                        value={dateFrom}
-                                        onChange={(newValue) => {
-                                            setDateFrom(newValue);
-                                        }}
-                                        renderInput={(params) => <TextField {...params} />}
-                                        InputProps={{ style: { fontSize: '1vmax' } }}
-                                        // InputLabelProps={{ style: { fontSize: '1vmax' } }}
-                                    />
+                                <FormGroup>
 
-                                    <DatePicker
-                                        label="Date To"
-                                        value={dateTo}
-                                        onChange={(newValue) => {
-                                            setDateTo(newValue);
-                                        }}
-                                        renderInput={(params) => <TextField {...params} />}
-                                        InputProps={{ style: { fontSize: '1vmax' } }}
-                                        // InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                                    {/*<FormControlLabel*/}
+                                    {/*    label="Today?"*/}
+                                    {/*    control ={*/}
+                                    {/*        <Checkbox*/}
+                                    {/*            checked={isTodayChecked}*/}
+                                    {/*            onChange={() => handleCheckBoxChange(0)}*/}
+                                    {/*            inputProps={{'aria-label': 'controlled'}}*/}
+
+                                    {/*        />*/}
+                                    {/*    }*/}
+                                    {/*/>*/}
+                                </FormGroup>
+
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <DateRangePicker
+                                        open={datePickerOpen}
+                                        toggle={toggle}
+                                        onChange={(range) => setDateRange(range)}
                                     />
+                                    {/*<DatePicker*/}
+                                    {/*    inputFormat ="dd/MM/yyyy"*/}
+                                    {/*    label="Date From"*/}
+                                    {/*    value={dateFrom}*/}
+                                    {/*    onChange={(newValue) => {*/}
+                                    {/*        setDateFrom(newValue);*/}
+                                    {/*        setDateTo(newValue);*/}
+                                    {/*    }}*/}
+                                    {/*    renderInput={(params) => <TextField {...params} />}*/}
+                                    {/*    InputProps={{ style: { fontSize: '1vmax' } }}*/}
+                                    {/*    // InputLabelProps={{ style: { fontSize: '1vmax' } }}*/}
+                                    {/*/>*/}
+
+                                    {/*<DatePicker*/}
+                                    {/*    inputFormat ="dd/MM/yyyy"*/}
+                                    {/*    label="Date To"*/}
+                                    {/*    value={dateTo}*/}
+                                    {/*    onChange={(newValue) => {*/}
+                                    {/*        setDateTo(newValue);*/}
+                                    {/*    }}*/}
+                                    {/*    renderInput={(params) => <TextField {...params} />}*/}
+                                    {/*    InputProps={{ style: { fontSize: '1vmax' } }}*/}
+                                    {/*    // InputLabelProps={{ style: { fontSize: '1vmax' } }}*/}
+                                    {/*/>*/}
 
 
                                     <FormGroup>
