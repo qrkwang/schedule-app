@@ -17,6 +17,11 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import events from './events'
 import "react-big-calendar/lib/css/react-big-calendar.css";
+
+import { enGB } from 'date-fns/locale'
+// import { DateRangePicker, START_DATE, END_DATE } from 'react-nice-dates'
+// import 'react-nice-dates/build/style.css'
+
 import {
     Button,
     Checkbox, Container, createTheme,
@@ -35,7 +40,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateRangePicker } from "mui-daterange-picker";
-import { DateRange } from "mui-daterange-picker/src/types";
 
 import {
     BrowserRouter,
@@ -52,8 +56,9 @@ const localizer = momentLocalizer(moment);
 //Made axios global
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
-// const backendURL = `http://192.168.68.100:3000`
-const backendURL = `http://192.168.127.148:3000`
+const backendURL = `http://192.168.68.100:3000`
+// const backendURL = `http://192.168.127.148:3000`
+
 
 
 const cardStyle  = {
@@ -235,6 +240,7 @@ const Login = () => {
                      <TextField
                          variant="outlined"
                          margin="normal"
+                         type={"password"}
                          required
                          fullWidth
                          id="password"
@@ -513,6 +519,11 @@ const Home = () => {
 
     let navigate = useNavigate();
 
+    interface DateRange {
+        startDate?: Date,
+        endDate?: Date
+    }
+
     const [open, setOpen] = useState(false);
     const [pageContent, setPageContent] = useState("");
     const [todayDate, setTodayDate] = useState("");
@@ -537,7 +548,7 @@ const Home = () => {
     const [checked, setChecked] = useState([]);
     // const [noteChecked, setNoteChecked] = useState([]);
     //Form Date Pickers
-    const [dateRange, setDateRange] = React.useState<DateRange>({});
+    const [dateRange, setDateRange] = React.useState({});
     const [datePickerOpen, setDatePickerOpen] = React.useState(false);
     const [dateFrom, setDateFrom] = useState(new Date());
     const [dateTo, setDateTo] = useState(new Date());
@@ -1072,6 +1083,16 @@ const Home = () => {
         // setChecked(newChecked);
     };
 
+    const dateRangeSelected = (range) => {
+        console.log("date range selected", range);
+        console.log("stratdate", range.startDate);
+        console.log("enddate", range.endDate)
+        setDatePickerOpen(false);
+
+        setDateFrom(range.startDate);
+        setDateTo(range.endDate);
+    }
+
     const handleCheckBoxChange = (type) => {
         if (type === 0) {
             // console.log("istoday is checked");
@@ -1496,11 +1517,34 @@ const Home = () => {
                                 </FormGroup>
 
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                    <DateRangePicker
-                                        open={datePickerOpen}
-                                        toggle={toggle}
-                                        onChange={(range) => setDateRange(range)}
-                                    />
+
+
+                                    {/*<DateRangePicker*/}
+                                    {/*    startDate={dateFrom}*/}
+                                    {/*    endDate={dateTo}*/}
+                                    {/*    onStartDateChange={setDateFrom}*/}
+                                    {/*    onEndDateChange={setDateTo}*/}
+                                    {/*    minimumDate={new Date().setDate()}*/}
+                                    {/*    minimumLength={0}*/}
+                                    {/*    format='dd MMM yyyy'*/}
+                                    {/*    locale={enGB}*/}
+                                    {/*>*/}
+                                    {/*    {({ startDateInputProps, endDateInputProps, focus }) => (*/}
+                                    {/*        <div className='date-range'>*/}
+                                    {/*            <input*/}
+                                    {/*                className={'input' + (focus === START_DATE ? ' -focused' : '')}*/}
+                                    {/*                {...startDateInputProps}*/}
+                                    {/*                placeholder='Start date'*/}
+                                    {/*            />*/}
+                                    {/*            <span className='date-range_arrow' />*/}
+                                    {/*            <input*/}
+                                    {/*                className={'input' + (focus === END_DATE ? ' -focused' : '')}*/}
+                                    {/*                {...endDateInputProps}*/}
+                                    {/*                placeholder='End date'*/}
+                                    {/*            />*/}
+                                    {/*        </div>*/}
+                                    {/*    )}*/}
+                                    {/*</DateRangePicker>*/}
                                     {/*<DatePicker*/}
                                     {/*    inputFormat ="dd/MM/yyyy"*/}
                                     {/*    label="Date From"*/}
@@ -1526,7 +1570,48 @@ const Home = () => {
                                     {/*    // InputLabelProps={{ style: { fontSize: '1vmax' } }}*/}
                                     {/*/>*/}
 
+                                    <Grid container>
+                                    <Grid item xs = '6' style = {{paddingRight: "10px"}} >
+                                        <TextField
+                                        onClick={() => setDatePickerOpen(true)}
+                                        margin="none"
+                                        id="dateFrom"
+                                        label="Start Date"
+                                        autoFocus
+                                        fullWidth
+                                        variant="standard"
+                                        value={dateFrom}
+                                        onChange={(e) => setEventTitle(e.target.value)}
+                                        size="normal"
+                                        InputProps={{ style: { fontSize: '1vmax' } }}
+                                        InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                                        disabled
+                                    />
+                                    </Grid>
+                                        <Grid item xs = '6' style = {{paddingLeft: "10px"}} >
+                                        <TextField
+                                            onClick={() => setDatePickerOpen(true)}
+                                            margin="none"
+                                            id="dateTo"
+                                            label="End Date"
+                                            fullWidth
+                                            variant="standard"
+                                            value={dateTo}
+                                            onChange={(e) => setEventDescription(e.target.value)}
+                                            size="normal"
+                                            InputProps={{ style: { fontSize: '1vmax' } }}
+                                            InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                                            disabled
+                                        />
+                                    </Grid>
+                                    </Grid>
 
+                                    <DateRangePicker
+                                        style = {{position: "absolute"}}
+                                        open={datePickerOpen}
+                                        toggle={toggle}
+                                        onChange={(range) => dateRangeSelected(range)}
+                                    />
                                     <FormGroup>
 
                                     <FormControlLabel
