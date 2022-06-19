@@ -12,6 +12,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import EventRepeatIcon from '@mui/icons-material/EventRepeat';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import Collapse from '@mui/material/Collapse';
 
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
@@ -25,7 +27,7 @@ import { enGB } from 'date-fns/locale'
 import {
     Button,
     Checkbox, Container, createTheme,
-    CssBaseline, FormControlLabel, FormGroup, IconButton,
+    CssBaseline, FormControlLabel, FormGroup, IconButton, InputAdornment,
     List,
     ListItem,
     ListItemText, Menu,
@@ -642,20 +644,21 @@ const Home = () => {
         e.preventDefault();
         console.log("dialog submit", addType);
 
-        //determine recurrence, only 1 is possible.
-        let recurrence = "";
-        if (weeklyChecked){
-            console.log("weekly is checked");
-            recurrence = "weekly";
-        } else if (monthlyChecked) {
-            console.log("monthly is checked");
-            recurrence = "monthly";
-        } else if (yearlyChecked) {
-            console.log("yearly is checked");
-            recurrence = "yearly";
-        }
 
         if (addType === "upcoming") {
+            //determine recurrence, only 1 is possible.
+            let recurrence = "";
+            if (weeklyChecked){
+                console.log("weekly is checked");
+                recurrence = "weekly";
+            } else if (monthlyChecked) {
+                console.log("monthly is checked");
+                recurrence = "monthly";
+            } else if (yearlyChecked) {
+                console.log("yearly is checked");
+                recurrence = "yearly";
+            }
+
             const event = {
                 eventTitle: eventTitle,
                 eventDescription: eventDescription,
@@ -745,6 +748,7 @@ const Home = () => {
         setEventDescription("");
         setDateFrom(new Date());
         setDateTo(new Date());
+        setDatePickerOpen(false)
         setNoteTitle("");
         setNoteDescription("");
         setWeeklyDisabled(false);
@@ -1580,12 +1584,16 @@ const Home = () => {
                                         autoFocus
                                         fullWidth
                                         variant="standard"
-                                        value={dateFrom}
+                                        value={moment(dateFrom).format('DD MMM YYYY')}
                                         onChange={(e) => setEventTitle(e.target.value)}
                                         size="normal"
-                                        InputProps={{ style: { fontSize: '1vmax' } }}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="start">
+                                                    <CalendarMonthIcon fontSize = "large"/>
+                                                </InputAdornment>
+                                            ),style: { fontSize: '1vmax' } }}
                                         InputLabelProps={{ style: { fontSize: '1vmax' } }}
-                                        disabled
                                     />
                                     </Grid>
                                         <Grid item xs = '6' style = {{paddingLeft: "10px"}} >
@@ -1596,22 +1604,31 @@ const Home = () => {
                                             label="End Date"
                                             fullWidth
                                             variant="standard"
-                                            value={dateTo}
+                                            value={moment(dateTo).format('DD MMM YYYY')}
                                             onChange={(e) => setEventDescription(e.target.value)}
                                             size="normal"
-                                            InputProps={{ style: { fontSize: '1vmax' } }}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <CalendarMonthIcon fontSize = "large"/>
+                                                    </InputAdornment>
+                                                ),
+                                                style: { fontSize: '1vmax' } }}
                                             InputLabelProps={{ style: { fontSize: '1vmax' } }}
-                                            disabled
                                         />
                                     </Grid>
                                     </Grid>
 
-                                    <DateRangePicker
-                                        style = {{position: "absolute"}}
-                                        open={datePickerOpen}
-                                        toggle={toggle}
-                                        onChange={(range) => dateRangeSelected(range)}
-                                    />
+                                    <Collapse in={datePickerOpen}>
+                                        <DateRangePicker
+                                            style = {{position: "absolute"}}
+                                            open={true}
+                                            toggle={toggle}
+                                            onChange={(range) => dateRangeSelected(range)}
+                                        />
+                                    </Collapse>
+
+
                                     <FormGroup>
 
                                     <FormControlLabel
@@ -1683,7 +1700,8 @@ const Home = () => {
                                 variant="standard"
                                 value={noteTitle}
                                 onChange={(e) => setNoteTitle(e.target.value)}
-                                InputProps={{ style: { fontSize: '1vmax' } }}
+                                InputProps={{
+                                    style: { fontSize: '1vmax' } }}
                                 InputLabelProps={{ style: { fontSize: '1vmax' } }}
                             />
                             <TextField
