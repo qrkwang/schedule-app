@@ -601,10 +601,10 @@ const Home = () => {
     //Handle calendar event click
     const handleSelectEvent = useCallback(
         (event) => {
-            // console.log("eventlist array length print out ", eventList);
-
+            console.log("eventlist array length print out ", eventList);
+            console.log("event on click");
             const eventId = event.id;
-            // console.log("event id from calendar is %s", event.id);
+            console.log("event id from calendar is %s", event.id);
 
             //Search for the clicked event in calendar event list.
             const eventItem = events.filter(eventObj => eventObj.id === eventId).at(0);
@@ -624,8 +624,8 @@ const Home = () => {
 
         if(typeof eventItem !== "undefined") {
             // console.log("handle click open " + eventItem.title);
-            eventItem.dateFrom = moment(eventItem.dateFrom).format('DD MMM YYYY h:mm:ss a');
-            eventItem.dateTo = moment(eventItem.dateTo).format('DD MMM YYYY h:mm:ss a');
+            // eventItem.dateFrom = moment(eventItem.dateFrom).format('DD MMM YYYY h:mm:ss a');
+            // eventItem.dateTo = moment(eventItem.dateTo).format('DD MMM YYYY h:mm:ss a');
 
             setCurrentClickedItem(eventItem);
         }
@@ -670,6 +670,8 @@ const Home = () => {
             // console.log("event post", event);
             instance.post(backendURL + `/events/user/create`, event)
                 .then(res => {
+                    //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
+                    setTriggerEventUpdate(true);
                     console.log("after create response is ", res);
                     console.log(res.data);
                 })
@@ -686,16 +688,15 @@ const Home = () => {
 
             instance.post(backendURL + `/notes/user/create`, note)
                 .then(res => {
+                    //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
+                    setTriggerEventUpdate(true);
                     console.log(res);
                     console.log(res.data);
                 });
         }
-        // console.log("after post");
         //After post, then reset state to empty.
         resetFields();
         setOpen(false);
-        //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
-        setTriggerEventUpdate(true);
 
     };
 
@@ -708,6 +709,8 @@ const Home = () => {
         instance.delete(backendURL + `/events/` + item.id)
             .then(res => {
                 console.log(res);
+                //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
+                setTriggerEventUpdate(true);
             })
 
         } else if (type === 2) {
@@ -715,6 +718,8 @@ const Home = () => {
             instance.delete(backendURL + `/notes/` + item.id)
                 .then(res => {
                     console.log(res);
+                    //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
+                    setTriggerEventUpdate(true);
                 })
         }
         handleDialogClose();
@@ -737,6 +742,8 @@ const Home = () => {
             instance.delete(backendURL + `/events/recurrence/` + item.mainId)
                 .then(res => {
                     console.log(res);
+                    //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
+                    setTriggerEventUpdate(true);
                 })
         }
         handleDialogClose();
@@ -821,7 +828,7 @@ const Home = () => {
 
         setTriggerEventUpdate(false);
 
-    }, [open, triggerEventUpdate]);
+    }, [open,triggerEventUpdate]);
 
     useEffect(() => {
         // console.log("event list updated", eventList) // do something after state has updated
@@ -1576,28 +1583,29 @@ const Home = () => {
                                     <Grid container>
                                     <Grid item xs = '6' style = {{paddingRight: "10px"}} >
                                         <TextField
-                                        onClick={() => setDatePickerOpen(true)}
-                                        margin="none"
-                                        id="dateFrom"
-                                        label="Start Date"
-                                        autoFocus
-                                        fullWidth
-                                        variant="standard"
-                                        value={moment(dateFrom).format('DD MMM YYYY')}
-                                        onChange={(e) => setEventTitle(e.target.value)}
-                                        size="normal"
-                                        InputProps={{
-                                            endAdornment: (
-                                                <InputAdornment position="start">
-                                                    <CalendarMonthIcon fontSize = "large"/>
-                                                </InputAdornment>
-                                            ),style: { fontSize: '1vmax' } }}
-                                        InputLabelProps={{ style: { fontSize: '1vmax' } }}
-                                    />
+                                            onClick={toggle}
+                                            margin="none"
+                                            id="dateFrom"
+                                            label="Start Date"
+                                            autoFocus
+                                            fullWidth
+                                            variant="standard"
+                                            value={moment(dateFrom).format('DD MMM YYYY')}
+                                            onChange={(e) => setEventTitle(e.target.value)}
+                                            size="normal"
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <CalendarMonthIcon
+                                                            fontSize = "large"/>
+                                                    </InputAdornment>
+                                                ),style: { fontSize: '1vmax' } }}
+                                            InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                                        />
                                     </Grid>
                                         <Grid item xs = '6' style = {{paddingLeft: "10px"}} >
                                         <TextField
-                                            onClick={() => setDatePickerOpen(true)}
+                                            onClick={toggle}
                                             margin="none"
                                             id="dateTo"
                                             label="End Date"
@@ -1609,7 +1617,8 @@ const Home = () => {
                                             InputProps={{
                                                 endAdornment: (
                                                     <InputAdornment position="start">
-                                                        <CalendarMonthIcon fontSize = "large"/>
+                                                        <CalendarMonthIcon
+                                                            fontSize = "large"/>
                                                     </InputAdornment>
                                                 ),
                                                 style: { fontSize: '1vmax' } }}
@@ -1622,8 +1631,9 @@ const Home = () => {
                                         <DateRangePicker
                                             style = {{position: "absolute"}}
                                             open={true}
-                                            toggle={toggle}
+                                            // toggle={toggle}
                                             onChange={(range) => dateRangeSelected(range)}
+                                            closeOnClickOutside={true}
                                         />
                                     </Collapse>
 
