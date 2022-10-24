@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -565,6 +565,7 @@ const Home = () => {
 
     //Calendar Values
     const [events, setCalendarEvents] = useState([])
+    const [defaultDate, setDefaultDate] = useState([])
 
     //Retrieve logged in user from localStorage and store into global var
     const userId = localStorage.getItem("userid");
@@ -584,6 +585,10 @@ const Home = () => {
 
     // const classes = useStyles();
     // const theme = createTheme();
+
+
+
+
     const MyCalendar = props => (
         <div>
             <Calendar
@@ -593,7 +598,7 @@ const Home = () => {
                 endAccessor="end"
                 style={{ margin: '0.5vmin', height: '80vh' }}
                 onSelectEvent={handleSelectEvent}
-
+                defaultDate={defaultDate}
             />
         </div>
     )
@@ -608,19 +613,16 @@ const Home = () => {
 
             //Search for the clicked event in calendar event list.
             const eventItem = events.filter(eventObj => eventObj.id === eventId).at(0);
-
             handleClickOpen("eventItem", eventItem);
-
-
         },
         [eventList]
     )
 
     //Handle dialog
     const handleClickOpen = (page, eventItem) => {
-        // console.log("eventitem received is", eventItem);
-        // console.log("handle click open " + page);
-        // console.log("handle click open eventitem is  " + JSON.stringify(eventItem));
+        console.log("eventitem received is", eventItem);
+        console.log("handle click open " + page);
+        console.log("handle click open eventitem is  " + JSON.stringify(eventItem));
 
         if(typeof eventItem !== "undefined") {
             // console.log("handle click open " + eventItem.title);
@@ -631,6 +633,7 @@ const Home = () => {
         }
         setPageContent(page);
         setOpen(true);
+        setDefaultDate(eventItem.dateFrom);
 
     };
 
@@ -828,7 +831,7 @@ const Home = () => {
 
         setTriggerEventUpdate(false);
 
-    }, [open,triggerEventUpdate]);
+    }, [triggerEventUpdate]);
 
     useEffect(() => {
         // console.log("event list updated", eventList) // do something after state has updated
