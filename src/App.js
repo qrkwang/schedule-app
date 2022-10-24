@@ -626,14 +626,14 @@ const Home = () => {
 
         if(typeof eventItem !== "undefined") {
             // console.log("handle click open " + eventItem.title);
-            // eventItem.dateFrom = moment(eventItem.dateFrom).format('DD MMM YYYY h:mm:ss a');
-            // eventItem.dateTo = moment(eventItem.dateTo).format('DD MMM YYYY h:mm:ss a');
+            eventItem.dateFrom = moment(eventItem.dateFrom).format('DD MMM YYYY h:mm:ss a');
+            eventItem.dateTo = moment(eventItem.dateTo).format('DD MMM YYYY h:mm:ss a');
 
             setCurrentClickedItem(eventItem);
+            setDefaultDate(eventItem.dateFrom);
         }
         setPageContent(page);
         setOpen(true);
-        setDefaultDate(eventItem.dateFrom);
 
     };
 
@@ -1062,6 +1062,8 @@ const Home = () => {
             //Axios post update to item isDone
             instance.put(backendURL + `/events/` + checkedItem.id, event)
                 .then(res => {
+                    //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
+                    setTriggerEventUpdate(true);
                     // console.log("")
                     // console.log(res);
                 })
@@ -1077,23 +1079,14 @@ const Home = () => {
             //Axios post update to item isDone
             instance.put(backendURL + `/notes/` + checkedItem.id, note)
                 .then(res => {
+                    //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
+                    setTriggerEventUpdate(true);
                     console.log("")
                     console.log(res);
                 })
         } else {
 
         }
-        //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
-        setTriggerEventUpdate(true);
-
-        //
-        // if (currentIndex === -1) {
-        //     newChecked.push(value);
-        // } else {
-        //     newChecked.splice(currentIndex, 1);
-        // }
-        //
-        // setChecked(newChecked);
     };
 
     const dateRangeSelected = (range) => {
@@ -1530,58 +1523,6 @@ const Home = () => {
                                 </FormGroup>
 
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
-
-
-                                    {/*<DateRangePicker*/}
-                                    {/*    startDate={dateFrom}*/}
-                                    {/*    endDate={dateTo}*/}
-                                    {/*    onStartDateChange={setDateFrom}*/}
-                                    {/*    onEndDateChange={setDateTo}*/}
-                                    {/*    minimumDate={new Date().setDate()}*/}
-                                    {/*    minimumLength={0}*/}
-                                    {/*    format='dd MMM yyyy'*/}
-                                    {/*    locale={enGB}*/}
-                                    {/*>*/}
-                                    {/*    {({ startDateInputProps, endDateInputProps, focus }) => (*/}
-                                    {/*        <div className='date-range'>*/}
-                                    {/*            <input*/}
-                                    {/*                className={'input' + (focus === START_DATE ? ' -focused' : '')}*/}
-                                    {/*                {...startDateInputProps}*/}
-                                    {/*                placeholder='Start date'*/}
-                                    {/*            />*/}
-                                    {/*            <span className='date-range_arrow' />*/}
-                                    {/*            <input*/}
-                                    {/*                className={'input' + (focus === END_DATE ? ' -focused' : '')}*/}
-                                    {/*                {...endDateInputProps}*/}
-                                    {/*                placeholder='End date'*/}
-                                    {/*            />*/}
-                                    {/*        </div>*/}
-                                    {/*    )}*/}
-                                    {/*</DateRangePicker>*/}
-                                    {/*<DatePicker*/}
-                                    {/*    inputFormat ="dd/MM/yyyy"*/}
-                                    {/*    label="Date From"*/}
-                                    {/*    value={dateFrom}*/}
-                                    {/*    onChange={(newValue) => {*/}
-                                    {/*        setDateFrom(newValue);*/}
-                                    {/*        setDateTo(newValue);*/}
-                                    {/*    }}*/}
-                                    {/*    renderInput={(params) => <TextField {...params} />}*/}
-                                    {/*    InputProps={{ style: { fontSize: '1vmax' } }}*/}
-                                    {/*    // InputLabelProps={{ style: { fontSize: '1vmax' } }}*/}
-                                    {/*/>*/}
-
-                                    {/*<DatePicker*/}
-                                    {/*    inputFormat ="dd/MM/yyyy"*/}
-                                    {/*    label="Date To"*/}
-                                    {/*    value={dateTo}*/}
-                                    {/*    onChange={(newValue) => {*/}
-                                    {/*        setDateTo(newValue);*/}
-                                    {/*    }}*/}
-                                    {/*    renderInput={(params) => <TextField {...params} />}*/}
-                                    {/*    InputProps={{ style: { fontSize: '1vmax' } }}*/}
-                                    {/*    // InputLabelProps={{ style: { fontSize: '1vmax' } }}*/}
-                                    {/*/>*/}
 
                                     <Grid container>
                                     <Grid item xs = '6' style = {{paddingRight: "10px"}} >
