@@ -70,8 +70,12 @@ const fontStyle = {
     display:'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '6vh',
-    fontSize: '1.5vmax',
+    paddingTop: "8px",
+    paddingBottom: "8px",
+    // height: '6vh',
+    fontSize: '1.7vmax',
+    // height: "50px",
+    // fontSize: "40px",
     fontWeight: 'bold',
 }
 
@@ -79,8 +83,10 @@ const fontSubHeaderStyle = {
     display:'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '6vh',
-    fontSize: '1.2vmax',
+    // height: '6vh',
+    paddingTop: "8px",
+    paddingBottom: "8px",
+    fontSize: '1.3vmax',
     fontWeight: 'bold',
 }
 
@@ -109,7 +115,7 @@ const Login = () => {
 
             console.log("username and password %s %s", userName, password);
             const user = {
-                username: userName,
+                username: userName.toLowerCase(),
                 password: password,
             };
 
@@ -234,8 +240,8 @@ const Login = () => {
                         value={userName}
                         onChange={(e) => setUsername(e.target.value.replace(/\s/g, ''))}
                         size="normal"
-                        InputProps={{ style: { fontSize: '1vmax' } }}
-                        InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                        InputProps={{ style: { fontSize: '20px' } }}
+                        InputLabelProps={{ style: { fontSize: '20px' } }}
                     />
 
                      <TextField
@@ -249,8 +255,8 @@ const Login = () => {
                          value={password}
                          onChange={(e) => setPassword(e.target.value.replace(/\s/g, ''))}
                          size="normal"
-                         InputProps={{ style: { fontSize: '1vmax' } }}
-                         InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                         InputProps={{ style: { fontSize: '20px' } }}
+                         InputLabelProps={{ style: { fontSize: '20px' } }}
                     />
                 <Button
 
@@ -327,7 +333,7 @@ const Register = () => {
 
         if (!areFieldsEmpty()) {
             const user = {
-                username: userName,
+                username: userName.toLowerCase(),
                 password: password,
             };
 
@@ -1492,8 +1498,8 @@ const Home = () => {
                                     value={eventTitle}
                                     onChange={(e) => setEventTitle(e.target.value)}
                                     size="normal"
-                                    InputProps={{ style: { fontSize: '1vmax' } }}
-                                    InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                                    InputProps={{ style: { fontSize: '20px' } }}
+                                    InputLabelProps={{ style: { fontSize: '20px' } }}
                                 />
                                 <TextField
                                     margin="none"
@@ -1504,8 +1510,8 @@ const Home = () => {
                                     value={eventDescription}
                                     onChange={(e) => setEventDescription(e.target.value)}
                                     size="normal"
-                                    InputProps={{ style: { fontSize: '1vmax' } }}
-                                    InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                                    InputProps={{ style: { fontSize: '20px' } }}
+                                    InputLabelProps={{ style: { fontSize: '20px' } }}
                                 />
                                 <FormGroup>
 
@@ -1543,8 +1549,8 @@ const Home = () => {
                                                         <CalendarMonthIcon
                                                             fontSize = "large"/>
                                                     </InputAdornment>
-                                                ),style: { fontSize: '1vmax' } }}
-                                            InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                                                ),style: { fontSize: '20px' } }}
+                                            InputLabelProps={{ style: { fontSize: '20px' } }}
                                         />
                                     </Grid>
                                         <Grid item xs = '6' style = {{paddingLeft: "10px"}} >
@@ -1565,8 +1571,8 @@ const Home = () => {
                                                             fontSize = "large"/>
                                                     </InputAdornment>
                                                 ),
-                                                style: { fontSize: '1vmax' } }}
-                                            InputLabelProps={{ style: { fontSize: '1vmax' } }}
+                                                style: { fontSize: '20px' } }}
+                                            InputLabelProps={{ style: { fontSize: '20px' } }}
                                         />
                                     </Grid>
                                     </Grid>
