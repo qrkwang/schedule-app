@@ -57,8 +57,9 @@ const localizer = momentLocalizer(moment);
 //Made axios global
 const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
-const backendURL = `http://192.168.68.100:3000`
+// const backendURL = `http://192.168.68.100:3000`
 // const backendURL = `http://192.168.127.148:3000`
+const backendURL = `http://localhost:3000`
 
 
 

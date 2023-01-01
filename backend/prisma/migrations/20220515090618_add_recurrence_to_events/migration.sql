@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE "Event" ADD COLUMN     "monthly" BOOLEAN NOT NULL DEFAULT false,
-ADD COLUMN     "weekly" BOOLEAN NOT NULL DEFAULT false,
-ADD COLUMN     "yearly" BOOLEAN NOT NULL DEFAULT false;
