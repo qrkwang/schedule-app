@@ -59,6 +59,7 @@ const axios = require("axios"); //use axios for http requests
 const instance = axios.create({ baseURL: "http://localhost:8080" }); //use this instance of axios for http requests
 // const backendURL = `http://192.168.68.100:3000`
 // const backendURL = `http://192.168.127.148:3000`
+// const backendURL = `http://192.168.68.131:3000`
 const backendURL = `http://localhost:3000`
 
 
@@ -535,6 +536,7 @@ const Home = () => {
     const [open, setOpen] = useState(false);
     const [pageContent, setPageContent] = useState("");
     const [todayDate, setTodayDate] = useState("");
+    const [calendarDateValue, setCalendarDateValue] = useState(new Date());
     const [triggerEventUpdate, setTriggerEventUpdate] = useState("");
     const [triggerNoteUpdate, setTriggerNoteUpdate] = useState("");
 
@@ -572,7 +574,6 @@ const Home = () => {
 
     //Calendar Values
     const [events, setCalendarEvents] = useState([])
-    const [defaultDate, setDefaultDate] = useState([])
 
     //Retrieve logged in user from localStorage and store into global var
     const userId = localStorage.getItem("userid");
@@ -594,18 +595,34 @@ const Home = () => {
     // const theme = createTheme();
 
 
-
+    const { messages } = useMemo(
+        () => ({
+          messages: {
+            previous: 'BACK',
+            next: 'NEXT',
+            today: 'TODAY',
+              },
+        }),
+        []
+      )
 
     const MyCalendar = props => (
         <div>
             <Calendar
+                date = {calendarDateValue}
+                onNavigate={date => {
+                    setCalendarDateValue(date);
+                  }}
                 localizer={localizer}
                 events={events}
                 startAccessor="start"
                 endAccessor="end"
                 style={{ margin: '0.5vmin', height: '80vh' }}
                 onSelectEvent={handleSelectEvent}
-                defaultDate={defaultDate}
+                views = {{
+                    month: true,
+                  }}
+                  messages={messages}
             />
         </div>
     )
@@ -637,7 +654,7 @@ const Home = () => {
             eventItem.dateTo = moment(eventItem.dateTo).format('DD MMM YYYY h:mm:ss a');
 
             setCurrentClickedItem(eventItem);
-            setDefaultDate(eventItem.dateFrom);
+            setCalendarDateValue(eventItem.dateFrom);
         }
         setPageContent(page);
         setOpen(true);
