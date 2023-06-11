@@ -50,6 +50,7 @@ import {
 } from "react-router-dom";
 import {grey, lightBlue, orange, purple} from "@mui/material/colors";
 import {ThemeProvider, makeStyles} from "@mui/styles";
+import CustomToolbar from "./CustomToolbar";
 
 const localizer = momentLocalizer(moment);
 
@@ -606,7 +607,7 @@ const Home = () => {
         []
       )
 
-    const MyCalendar = props => (
+    const MyCalendar = () => (
         <div>
             <Calendar
                 date = {calendarDateValue}
@@ -623,6 +624,9 @@ const Home = () => {
                     month: true,
                   }}
                   messages={messages}
+                components={{
+                    toolbar: CustomToolbar
+                }}
             />
         </div>
     )
@@ -651,10 +655,11 @@ const Home = () => {
         if(typeof eventItem !== "undefined") {
             // console.log("handle click open " + eventItem.title);
             eventItem.dateFrom = moment(eventItem.dateFrom).format('DD MMM YYYY h:mm:ss a');
-            eventItem.dateTo = moment(eventItem.dateTo).format('DD MMM YYYY h:mm:ss a');
+            // eventItem.dateTo = moment(eventItem.dateTo).format('DD MMM YYYY h:mm:ss a');
 
             setCurrentClickedItem(eventItem);
-            setCalendarDateValue(eventItem.dateFrom);
+            console.log("setting date as ", eventItem.dateFrom);
+            setCalendarDateValue(moment(eventItem.dateFrom).toDate());
         }
         setPageContent(page);
         setOpen(true);

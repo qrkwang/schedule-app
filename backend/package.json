@@ -8,6 +8,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@material-ui/core": "^4.12.4",
     "@prisma/client": "^3.13.0",
     "cors": "^2.8.5",
     "express": "^4.17.3"
