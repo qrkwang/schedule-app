@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {Children, useCallback, useEffect, useMemo, useState} from "react";
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -24,6 +24,7 @@ import { enGB } from 'date-fns/locale'
 // import 'react-nice-dates/build/style.css'
 
 import {
+    Badge,
     Button,
     Checkbox, Container, createTheme,
     CssBaseline, FormControlLabel, FormGroup, IconButton, InputAdornment,
@@ -51,6 +52,7 @@ import {
 import {grey, lightBlue, orange, purple} from "@mui/material/colors";
 import {ThemeProvider, makeStyles} from "@mui/styles";
 import CustomToolbar from "./CustomToolbar";
+import {today} from "react-big-calendar/lib/utils/dates";
 
 const localizer = momentLocalizer(moment);
 
@@ -607,6 +609,41 @@ const Home = () => {
         []
       )
 
+    const ColoredDateCellWrapper = ({children, value}) =>
+        React.cloneElement(Children.only(children), {
+            style: {
+                ...children.style,
+                backgroundColor: moment(value).isSame(today()) ? 'Aqua' : null,
+                fontWeight: 'bond' ,
+            },
+        });
+
+    // const EventWrapperComponent = ({ event, children }: any) => {
+    //     const newChildren = { ...children };
+    //     const newChildrenProps = { ...newChildren.props };
+    //     newChildrenProps.className = `${newChildrenProps.className} outline-none border-none  bg-red-500`;
+    //     newChildren.props = { ...newChildrenProps };
+    //
+    //     return <div>{newChildren}</div>;
+    // };
+    const CustomEvent = ({ event, children }: any) => {
+        console.log("event: ", event);
+        console.log("event: ", event.isDone);
+        if (event.isDone) {
+            return (
+                <div>
+                    <strong>{event.title}</strong>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <strong>{event.title}</strong>
+                </div>
+            );
+        }
+
+    }
     const MyCalendar = () => (
         <div>
             <Calendar
@@ -625,7 +662,26 @@ const Home = () => {
                   }}
                   messages={messages}
                 components={{
-                    toolbar: CustomToolbar
+                    toolbar: CustomToolbar,
+                    dateCellWrapper: ColoredDateCellWrapper,
+                    month: {
+                        dateHeader: ({ date, label }) => {
+
+                            let highlightDate =
+                                events.find(event =>
+                                    moment(date).isSame(today())
+                                ) != undefined;
+                            return (
+
+                                // <h1 style={highlightDate ? { color: "red" } : null}>{label}</h1>
+                            <Typography sx={highlightDate ? {textDecoration: 'underline', color: "black ", fontWeight: "bold"} : null} display="inline">{label} </Typography>
+                            );
+                        },
+                        event: CustomEvent
+
+
+                    }
+
                 }}
             />
         </div>
