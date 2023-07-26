@@ -1,4 +1,10 @@
 .App {
   text-align: center;
 }
+.rbc-event-green {
+  background-color: lightgreen;
+}
 
+.rbc-event-blue {
+  background-color: deepskyblue;
+}

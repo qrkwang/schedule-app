@@ -18,6 +18,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import events from './events'
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import "./App.css";
 
 import { enGB } from 'date-fns/locale'
 // import { DateRangePicker, START_DATE, END_DATE } from 'react-nice-dates'
@@ -618,26 +619,31 @@ const Home = () => {
             },
         });
 
-    // const EventWrapperComponent = ({ event, children }: any) => {
-    //     const newChildren = { ...children };
-    //     const newChildrenProps = { ...newChildren.props };
-    //     newChildrenProps.className = `${newChildrenProps.className} outline-none border-none  bg-red-500`;
-    //     newChildren.props = { ...newChildrenProps };
-    //
-    //     return <div>{newChildren}</div>;
-    // };
+    const EventWrapperComponent = ({ event, children }: any) => {
+        const newChildren = { ...children };
+        const newChildrenProps = { ...newChildren.props };
+
+        if (event.isDone) {
+            newChildrenProps.className = `${newChildrenProps.className} rbc-event-green`;
+        } else {
+            newChildrenProps.className = `${newChildrenProps.className} rbc-event-blue`;
+        }
+        newChildren.props = { ...newChildrenProps };
+        // console.log("newchildren: ", newChildren);
+        return <div>{newChildren}</div>;
+    };
     const CustomEvent = ({ event, children }: any) => {
-        console.log("event: ", event);
-        console.log("event: ", event.isDone);
         if (event.isDone) {
             return (
-                <div>
+                <div style = {{ color: "#f9f9f9"}}>
+                    <strike>
                     <strong>{event.title}</strong>
+                    </strike>
                 </div>
             );
         } else {
             return (
-                <div>
+                <div style = {{ color: "#f9f9f9"}}>
                     <strong>{event.title}</strong>
                 </div>
             );
@@ -664,6 +670,7 @@ const Home = () => {
                 components={{
                     toolbar: CustomToolbar,
                     dateCellWrapper: ColoredDateCellWrapper,
+                    eventWrapper: EventWrapperComponent,
                     month: {
                         dateHeader: ({ date, label }) => {
 
@@ -1766,6 +1773,7 @@ const Home = () => {
             // console.log("current clickeditem is ", currentClickedItem);
             // console.log("current clickeditem eventTitle ", currentClickedItem.eventTitle);
             // console.log("current clickeditem eventDesc ", currentClickedItem.eventDescription);
+            // console.log("current clickeditem isDone ", currentClickedItem.isDone);
 
             return (
                 <Dialog style = {{
@@ -1789,6 +1797,7 @@ const Home = () => {
 
                         <Typography style = {{fontSize: '1vmax'}}> From: {moment(currentClickedItem.start).format('DD MMM YYYY h:mm a')}</Typography>
                         <Typography style = {{fontSize: '1vmax'}}> To: {moment(currentClickedItem.end).format('DD MMM YYYY h:mm a')}</Typography>
+                        <Typography style = {{fontSize: '1vmax'}}> Status: {currentClickedItem.isDone ? "COMPLETED" : "NOT DONE YET"}</Typography>
 
                         </Stack>
                     </DialogContent>
