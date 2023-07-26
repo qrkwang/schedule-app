@@ -496,10 +496,10 @@ const Register = () => {
                             </Grid>
                         </Grid>
                     </form>
-                    <Modal center
-                        // open={open}
-                        // onClose={onCloseModal}
-                    >
+                    {/*<Modal center*/}
+                    {/*    // open={open}*/}
+                    {/*    // onClose={onCloseModal}*/}
+                    {/*>*/}
                         {/*{modalType === "invalid" ? (*/}
                         {/*    <div>*/}
                         {/*        <h2> Invalid Login Details </h2>*/}
@@ -516,7 +516,7 @@ const Register = () => {
                         {/*        <p>Please contact the administrator.</p>*/}
                         {/*    </div>*/}
                         {/*)}*/}
-                    </Modal>
+                    {/*</Modal>*/}
                     {renderDialogContent()}
 
                 </div>
@@ -697,10 +697,10 @@ const Home = () => {
     //Handle calendar event click
     const handleSelectEvent = useCallback(
         (event) => {
-            console.log("eventlist array length print out ", eventList);
-            console.log("event on click");
+            // console.log("eventlist array length print out ", eventList);
+            // console.log("event on click");
             const eventId = event.id;
-            console.log("event id from calendar is %s", event.id);
+            // console.log("event id from calendar is %s", event.id);
 
             //Search for the clicked event in calendar event list.
             const eventItem = events.filter(eventObj => eventObj.id === eventId).at(0);
@@ -711,9 +711,9 @@ const Home = () => {
 
     //Handle dialog
     const handleClickOpen = (page, eventItem) => {
-        console.log("eventitem received is", eventItem);
-        console.log("handle click open " + page);
-        console.log("handle click open eventitem is  " + JSON.stringify(eventItem));
+        // console.log("eventitem received is", eventItem);
+        // console.log("handle click open " + page);
+        // console.log("handle click open eventitem is  " + JSON.stringify(eventItem));
 
         if(typeof eventItem !== "undefined") {
             // console.log("handle click open " + eventItem.title);
@@ -721,7 +721,7 @@ const Home = () => {
             // eventItem.dateTo = moment(eventItem.dateTo).format('DD MMM YYYY h:mm:ss a');
 
             setCurrentClickedItem(eventItem);
-            console.log("setting date as ", eventItem.dateFrom);
+            // console.log("setting date as ", eventItem.dateFrom);
             setCalendarDateValue(moment(eventItem.dateFrom).toDate());
         }
         setPageContent(page);
@@ -736,20 +736,20 @@ const Home = () => {
 
     const handleDialogSubmit = (e, addType) => {
         e.preventDefault();
-        console.log("dialog submit", addType);
+        // console.log("dialog submit", addType);
 
 
         if (addType === "upcoming") {
             //determine recurrence, only 1 is possible.
             let recurrence = "";
             if (weeklyChecked){
-                console.log("weekly is checked");
+                // console.log("weekly is checked");
                 recurrence = "weekly";
             } else if (monthlyChecked) {
-                console.log("monthly is checked");
+                // console.log("monthly is checked");
                 recurrence = "monthly";
             } else if (yearlyChecked) {
-                console.log("yearly is checked");
+                // console.log("yearly is checked");
                 recurrence = "yearly";
             }
 
@@ -767,8 +767,8 @@ const Home = () => {
                 .then(res => {
                     //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
                     setTriggerEventUpdate(true);
-                    console.log("after create response is ", res);
-                    console.log(res.data);
+                    // console.log("after create response is ", res);
+                    // console.log(res.data);
                 })
                 .catch(error => {
                   console.log(error.response.data.error);
@@ -785,8 +785,8 @@ const Home = () => {
                 .then(res => {
                     //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
                     setTriggerEventUpdate(true);
-                    console.log(res);
-                    console.log(res.data);
+                    // console.log(res);
+                    // console.log(res.data);
                 });
         }
         //After post, then reset state to empty.
@@ -803,7 +803,7 @@ const Home = () => {
             // console.log("deleting event");
         instance.delete(backendURL + `/events/` + item.id)
             .then(res => {
-                console.log(res);
+                // console.log(res);
                 //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
                 setTriggerEventUpdate(true);
             })
@@ -812,31 +812,57 @@ const Home = () => {
             // console.log("deleting notes");
             instance.delete(backendURL + `/notes/` + item.id)
                 .then(res => {
-                    console.log(res);
+                    // console.log(res);
                     //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
                     setTriggerEventUpdate(true);
                 })
         }
         handleDialogClose();
     }
+
+    //Handle toggle checkbox
+    const toggleEventStatus = (event) => {
+        // console.log("toggle status button clicked, event :", event);
+        const newEvent = {
+            eventTitle: event.eventTitle,
+            eventDescription: event.eventDescription,
+            dateTo: event.dateTo,
+            dateFrom: event.dateFrom,
+            isDone: !event.isDone,
+            userId: userId,
+        };
+
+        //Axios post update to item isDone
+        instance.put(backendURL + `/events/` + event.id, newEvent)
+            .then(res => {
+                //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
+                setTriggerEventUpdate(true);
+                console.log("")
+                console.log(res);
+            })
+
+        handleDialogClose();
+
+    }
+
     const deleteAllRecurrences = (item) => {
-        console.log("deleting all recurrences");
+        // console.log("deleting all recurrences");
         // console.log("item", item);
-        console.log("item mainid", item.mainId);
+        // console.log("item mainid", item.mainId);
         if (!item.recurrence) {
             console.log("event is not recurring, cannot delete");
         } else {
             if (item.mainId === 0) {
 
             }
-            console.log("event is recurring");
+            // console.log("event is recurring");
         // console.log("deleting item ", item);
         // console.log("type is ", type);
 
             // console.log("deleting event");
             instance.delete(backendURL + `/events/recurrence/` + item.mainId)
                 .then(res => {
-                    console.log(res);
+                    // console.log(res);
                     //Set boolean true to triggerRender to load eventList again (to populate accurate checkbox values)
                     setTriggerEventUpdate(true);
                 })
@@ -918,7 +944,7 @@ const Home = () => {
 
     //Call APIs for events and notes
     useEffect(()=> {
-        console.log("open or triggerEventUpdate is toggled");
+        // console.log("open or triggerEventUpdate is toggled");
         getEventsAndNotes();
 
         setTriggerEventUpdate(false);
@@ -1214,9 +1240,9 @@ const Home = () => {
             setMonthlyDisabled(!monthlyDisabled)
             setWeeklyDisabled(!weeklyDisabled)
         }
-        console.log("weekly checked", weeklyChecked);
-        console.log("monthly checked", monthlyChecked);
-        console.log("yearly checked", yearlyChecked);
+        // console.log("weekly checked", weeklyChecked);
+        // console.log("monthly checked", monthlyChecked);
+        // console.log("yearly checked", yearlyChecked);
 
     };
 
@@ -1802,6 +1828,9 @@ const Home = () => {
                         </Stack>
                     </DialogContent>
                     <DialogActions>
+                        <Button variant = "outlined" color = "warning" onClick={ () => {
+                            // console.log("toggle setatus clicked");
+                            toggleEventStatus(currentClickedItem)}}>Toggle Status</Button>
                         {currentClickedItem.recurrence !== "" && (
                         <Button variant = "outlined" color = "error"  onClick={ () => deleteAllRecurrences(currentClickedItem, 1)}>Remove all recurrences</Button> )}
                         <Button variant = "outlined" color = "warning" onClick={ () => deleteItem(currentClickedItem, 1)}>Remove this</Button>
